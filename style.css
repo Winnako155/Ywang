@@ -1,0 +1,331 @@
+@font-face {
+    font-family: 'xiangsu';
+    src: url('res/fonts/xiangsu.ttf');
+    font-weight: 400;
+}
+
+@keyframes begin { /* 显示动画 */
+    0% {
+        opacity: 0;
+        transform: scale(2);
+        backdrop-filter: blur(0px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        backdrop-filter: blur(5px);
+    }
+}
+
+@keyframes scale_Background { /* 背景缩放动画 */
+    0% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+* { /* 全局样式 */
+    margin: 0; /* 全局外边距 */
+    padding: 0; /* 全局内边距 */
+    font-family: 'xiangsu', sans-serif; /* 字体 */
+    cursor: none;
+}
+
+body {
+    position: relative; /* 相对定位 */
+    overflow: hidden; /* 隐藏超出部分 */
+    background-color: #464646; /* 背景颜色 */
+}
+
+.bg-container {
+    position: fixed; /* 固定定位 */
+    top: 0; /* 顶部对齐 */
+    left: 0; /* 左侧对齐 */
+    width: 100%; /* 宽度占满全屏 */
+    height: 100%; /* 高度占满全屏 */
+    background-image: url('res/bg.png'); /* 背景图片 */
+    background-position: center center; /* 背景图片居中 */
+    background-repeat: no-repeat; /* 不重复 */
+    background-size: cover; /* 背景图片覆盖全屏 */
+    animation: scale_Background 2s ease forwards; /* 背景缩放动画 */
+    z-index: -1; /* 置于底层 */
+}
+
+#mainView {
+    position: absolute; /* 绝对定位 */
+    left: 0; /* 左侧对齐 */
+    top: 0; /* 顶部对齐 */
+    width: 100vw;    /* 宽度占满全屏 */
+    height: 100vh; /* 高度占满全屏 */
+    background-color: #0505051c; /* 背景颜色 */
+
+    display: flex; /* 弹性布局 */
+    flex-direction: row; /* 水平方向 */
+    align-items: center; /* 垂直居中对齐 */
+
+    opacity: 0;
+}
+
+#mainView.animate {
+    animation: begin 3s ease forwards;
+}
+
+#leftView { /* 左侧视图容器 */
+    height: 100%; /* 左侧视图高度占满视口高度 */
+    width: 300px; /* 左侧视图宽度 */
+
+    background-color: #0000002b;
+
+    box-sizing: border-box; /* 确保元素的宽度计算包含内边距和边框 */
+    backdrop-filter: blur(5px); /* 模糊效果 */
+    display: flex; /* 弹性布局 */
+    flex-direction: column; /* 垂直方向 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+}
+
+#left_logoView { /* 左侧视图内容样式 */
+
+    height: 90%; /* 左侧视图内容高度占满视口高度 */
+    width: 90%; /* 左侧视图内容宽度占满视口宽度 */
+    box-sizing: border-box; /* 确保元素的宽度计算包含内边距和边框 */
+
+    display: flex; /* 弹性布局 */
+    flex-direction: column; /* 垂直方向 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    
+    border: 2px dashed rgba(255, 255, 255, 1); /* 边框 */
+}
+
+#leftView img { /* 左侧视图logo样式 */
+    width: 50%;
+}
+
+#left_contentView { /* 左侧内容视图 */
+    width: 90%; /* 宽度占父容器的90% */
+    display: flex; /* 弹性布局 */
+    flex-direction: row; /* 水平方向排列 */
+    align-items: center; /* 垂直居中 */
+    justify-content: end; /* 水平左对齐 */
+    flex-wrap: wrap; /* 换行 */
+    gap: 10px; /* 间距 */
+
+}
+#left_contentView a { /* 左侧内容视图中的链接 */
+    padding: 5px; /* 内边距 */
+    margin: 5px 0 10px 0; /* 外边距 */
+    box-sizing: border-box; /* 确保元素的宽度计算包含内边距和边框 */
+
+    display: flex; /* 弹性布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+
+    background-color: #ffffff00; /* 背景颜色 */
+    outline: 5px solid #ffffff00; /* 取消轮廓线 */
+    border-radius: 5px; /* 圆角 */
+    transition: all 0.3s ease; /* 过渡效果 */
+}
+#left_contentView a:hover { /* 左侧内容视图中链接悬停样式 */
+    background-color: #ffffff1a; /* 背景颜色 */
+    outline: 1px solid #ffffff1a; /* 取消轮廓线 */
+}
+#left_contentView a img { /* 左侧内容视图中链接内的图片 */
+    width: 30px; /* 宽度固定为30像素 */
+    height: auto; /* 高度自适应 */
+}
+
+#rightView { /* 右侧视图容器 */
+    flex: 1; /* 占满剩余空间 */
+    height: 100%; /* 高度占满视口高度 */
+
+
+    display: flex; /* 弹性布局 */
+    flex-direction: column; /* 垂直方向 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+}
+
+#rightView_mainView { /* 右侧视图主视图 */
+    box-sizing: border-box; /* 确保元素的宽度计算包含内边距和边框 */
+}
+
+#rightView_title { /* 右侧视图标题 */
+    font-size: 50px; /* 字体大小 */
+    color: #ffffff; /* 字体颜色 */
+    text-align: center; /* 文本居中对齐 */
+}
+#rightView_quotes {
+    font-size: 12px; /* 字体大小 */
+    color: #ffffff; /* 字体颜色 */
+    text-align: center; /* 文本居中对齐 */
+}
+
+#rightView_contentView { /* 右侧视图内容视图 */
+    box-sizing: border-box; /* 确保元素的宽度计算包含内边距和边框 */
+    padding: 20px; /* 内边距 */
+    margin: 20px 0; /* 外边距 */
+    overflow: auto; /* 自动滚动 */
+}
+
+#rightView_firstLine { /* 第一行 */
+    display: flex; /* 弹性布局 */
+    flex-direction: row; /* 水平方向排列 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    gap: 10px; /* 间距 */
+}
+
+
+.items { /* 视图元素项 */
+    box-sizing: border-box; /* 确保元素的宽度计算包含内边距和边框 */
+    padding: 10px; /* 内边距 */
+    background-color: rgba(0, 0, 0, 0.222); /* 半透明黑色背景 */
+    border-radius: 8px; /* 圆角边框 */
+    color: white; /* 白色文字 */
+    backdrop-filter: blur(15px); /* 模糊效果 */
+
+    
+
+    width: 230px; /* 固定宽度 */
+    height: 100px; /* 固定高度 */
+    flex-shrink: 0; /* 不允许缩小 */
+    flex-grow: 0; /* 不允许放大 */
+    overflow: hidden; /* 隐藏溢出内容 */
+    text-overflow: ellipsis; /* 文本溢出时显示省略号 */
+    white-space: nowrap; /* 文本不换行 */
+
+    
+    transition: all 0.3s ease; /* 过渡效果 */
+}
+.items:hover {
+    background-color: rgba(0, 0, 0, 0.447); /* 鼠标悬停时背景颜色 */
+    transform: scale(1.01);
+}
+
+#rightView_timeView{ /* 时间视图 */
+    display: flex; /* 使用弹性盒布局 */
+    flex-direction: column; /* 垂直排列子元素 */
+    align-items: center; /* 水平居中对齐 */
+    justify-content: center; /* 垂直居中对齐 */
+}
+
+#rightView_time { /* 时间视图 */
+    font-size: 40px; /* 字体大小 */
+    
+}
+
+#rightView_timeCapsuleView{ /* 时间视图 */
+    display: flex; /* 使用弹性盒布局 */
+    flex-direction: column; /* 垂直排列子元素 */
+    align-items: center; /* 水平居中对齐 */
+    justify-content: center; /* 垂直居中对齐 */
+
+    padding: 20px;
+}
+
+#rightView_timeCapsuleText { /* 时间视图文本 */
+    margin-bottom: 8px; /* 下外边距 */
+    font-size: 23px; /* 字体大小 */
+}
+
+#yearProcess { /* 时间进度条 */
+    width: 100%;
+    height: 14px;
+    background-color: #ffffff1e;
+    border-radius: 3px;
+    position: relative;
+}
+#yearProcessContent { /* 时间进度条内容 */
+    width: 0;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 2s ease;
+}
+#yearProcess p { /* 时间进度条文本 */
+    font-size: 12px; /* 字体大小 */
+    color: #000000; /* 字体颜色 */
+    box-sizing: border-box; /* 确保内边距和边框不占用元素的边距 */
+    padding: 0; /* 内边距 */
+}
+
+#issueView {
+    width: 100%; 
+    margin-top: 10px; 
+    padding-bottom: 20px; 
+    height: auto;
+}
+#issues {
+    margin-top: 10px;
+    list-style-type: none;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+#issues li {
+    padding: 7px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0);
+    outline: 5px solid #00000000;
+    transition: all 0.3s ease;
+}
+#issues li:hover {
+    outline: 1px solid rgba(0, 0, 0, 0.414);
+    background-color: rgba(0, 0, 0, 0.414);
+}
+
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #464646;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: opacity 0.5s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#loading-screen.fade-out {
+    opacity: 0;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    margin-top: 20px;
+    color: #fff;
+    font-size: 16px;
+}

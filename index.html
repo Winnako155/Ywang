@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./aplayer.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <title>这里是Ywang</title>
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">正在加载...</p>
+    </div>
+    <div class="bg-container"></div> <!-- 背景容器 -->
+    <div id="mainView"> <!-- 主视图容器 -->
+        <!-- 左视图容器 -->
+        <div id="leftView">
+            <div style="width: 90%; position: relative; margin-top: 10px;">
+                <div style="background-color: #000000; color: white; width: 60px; text-align: center;"><p style="font-family: 'xiangsu';">CONTENT</p></div>
+            </div>
+            <div id="left_logoView" style="position: relative;">
+                <img src="res/logo.png" alt="logo">
+                <img src="res/title.png" alt="title" style="position: absolute; right: 5px; bottom: 8px;">
+            </div>
+            <div id="left_contentView">
+                <!-- Bilibili主页 -->
+                <a href="https://space.bilibili.com/696501979">
+                    <img src="./res/bilibili.png" alt="bilibili">
+                </a>
+                <!-- GitHub主页 -->
+                <a href="https://github.com/Winnako155">
+                    <img src="./res/github.png" alt="github">
+                </a>
+                <!-- Email主页 -->
+                <a href="mailto:15100178931@163.com">
+                    <img src="./res/mail.png" alt="email">
+                </a>
+            </div>
+        </div> <!-- 左侧视图 -->
+
+        <!-- 右视图容器 -->
+        <div id="rightView">
+            
+            <div id="rightView_mainView"> <!-- 右侧图 标题视图 -->
+                <h1 id="rightView_title">这里是YWANG</h1> <!-- 标题 -->
+                <p id="rightView_quotes"></p> <!-- 引言 -->
+                <div id="rightView_contentView"> <!-- 主内容视图 -->
+                    <div id="rightView_firstLine"> <!-- 第一行 -->
+                        <div id="rightView_timeView" class="items"> <!-- 时间视图 -->
+                            <p id="rightView_date">NaN年NaN月NaN日 星期NaN</p>
+                            <p id="rightView_time">NaN:NaN:NaN</p> <!-- 时间 -->
+                        </div>
+                        <div id="rightView_timeCapsuleView" class="items"> <!-- 时间视图 -->
+                            <p id="rightView_timeCapsuleText">NaN年已经过去了:</p>
+                            <div id="yearProcess"> <!-- 时间进度条 -->
+                                <div id="yearProcessContent">
+                                    <p id="yearProcessText">NaN%</p>
+                                </div> <!-- 进度条内容 -->
+                            </div> 
+                        </div>
+                    </div>
+                    <div id="issueView" class="items" > <!-- 第二行 -->
+                        <h1 style="margin-left: 5px;">随记</h1>
+                        <ul id="issues">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="aplayer"></div>
+</body> 
+<script src="https://cdn.bootcdn.net/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- Markdown解析库 -->
+<script src="./dialog.js"></script> <!-- 对话框 -->
+<script src="./githubIssue.js"></script>
+<script src="./quotes.js"></script> <!-- 引言 -->
+<script src="./styles.js"></script> <!-- 样式 -->
+<script src="./script.js"></script> <!-- 脚本 -->
+<script src="./live2d/autoload.js"></script> <!-- 自动加载 live2d -->
+</html>

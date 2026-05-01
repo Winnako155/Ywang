@@ -1,0 +1,95 @@
+@font-face { /* 引入字体 */
+       font-family: 'title';
+    src: url('./res/fonts/xiangsu.ttf');
+}
+
+@keyframes dialogShow { /* 弹窗显示动画 */
+    0% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+@keyframes dialogHide { /* 弹窗隐藏动画 */
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+}
+
+
+* {
+    font-family: 'title'; /* 全局字体 */
+}
+#dialog-backGround { /* 弹窗背景 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 999;
+    transition: all 0.3s ease;
+}
+#dialog-mainView { /* 弹窗主体 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #000000cf;
+    border: 1px solid #ffffff9d;
+    border-radius: 8px;
+    padding: 30px;
+    padding-bottom: 80px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    color: #ffffff;
+    animation: dialogShow 0.3s ease forwards;
+    z-index: 999;
+}
+#dialog-btnGroup { /* 弹窗按钮组 */
+    width: 85%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+
+    position: absolute;
+    bottom: 20px;
+    left: 25px;
+    gap: 10px;
+}
+#dialog-btnGroup button { /* 弹窗按钮 */
+    width: 40px;
+    height: 35px;
+    border: 1px solid #ffffff38;
+    background-color: #ffffff42;
+    color: #ffffff;
+    border-radius: 4px;
+    padding: 5px;
+    box-sizing: border-box;
+    flex: 0 0 100px;
+
+    transition: all 0.2s ease;
+}
+#dialog-btnGroup button:hover { /* 弹窗按钮悬停 */
+    background-color: #ffffff5a;
+}
+#dialog-btnGroup button:active { /* 弹窗按钮点击 */
+    background-color: #ffffffdd;
+    color: #000000;
+}
+
