@@ -3,80 +3,413 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./Aplayer.min.css">
-    <link rel="stylesheet" href="./style.css">
+    <!-- 引入APlayer样式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
     <title>这里是Ywang</title>
 </head>
-<body>
-    <div id="loading-screen">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">正在加载...</p>
-    </div>
-    <div class="bg-container"></div> <!-- 背景容器 -->
-    <div id="mainView"> <!-- 主视图容器 -->
-        <!-- 左视图容器 -->
-        <div id="leftView">
-            <div style="width: 90%; position: relative; margin-top: 10px;">
-                <div style="background-color: #000000; color: white; width: 60px; text-align: center;"><p style="font-family: 'xiangsu';">CONTENT</p></div>
-            </div>
-            <div id="left_logoView" style="position: relative;">
-                <img src="res/logo.png" alt="logo">
-                <img src="res/title.png" alt="title" style="position: absolute; right: 5px; bottom: 8px;">
-            </div>
-            <div id="left_contentView">
-                <!-- Bilibili主页 -->
-                <a href="https://space.bilibili.com/696501979">
-                    <img src="./res/bilibili.png" alt="bilibili">
-                </a>
-                <!-- GitHub主页 -->
-                <a href="https://github.com/Winnako155">
-                    <img src="./res/github.png" alt="github">
-                </a>
-                <!-- Email主页 -->
-                <a href="mailto:15100178931@163.com">
-                    <img src="./res/mail.png" alt="email">
-                </a>
-            </div>
-        </div> <!-- 左侧视图 -->
+<style>
+    p, h1, h2, h3, h4{
+        cursor: default;
+    }
+    .icon {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      stroke-width: 0;
+      stroke: currentColor;
+      fill: currentColor;
+    }
+    .scroll-container {
+      width: 100%; /* 设置容器宽度 */
+      height: 300px; /* 设置容器高度 */
+      overflow: auto; /* 显示滚动条，根据内容决定是否显示 */
 
-        <!-- 右视图容器 -->
+      /* 隐藏默认的滚动条样式 */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+    .scroll-container::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, and Opera */
+    }
+    ::-webkit-scrollbar {
+      display: none; /* Chrome Safari */
+    }
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        -webkit-tap-highlight-color: transparent;
+        background-color: #f5f5f5;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+    }
+
+    #mainView{
+        background-color: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        padding: 15px 100px 10px 100px;
+    }
+    
+
+    #leftView{
+        width: 180px;
+        height: 100%;
+        margin-left: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #rightView{
+        height: 100%;
+        flex: 1;
+        margin-left: 20px;
+    }
+    .contentBox{
+        box-sizing: border-box;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.2);
+        margin-bottom: 10px;
+        transition: all 0.2s ease;
+    }
+    .contentBox:hover{
+        background-color: rgba(0, 0, 0, 0.3);
+        transform: translateY(-2px);
+    }
+    .buttons{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+    }
+    .buttons svg{
+        width: 20px;
+        height: 20px;
+    }
+    .buttons button{
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+        padding: 5px;
+        border-radius: 4px;
+        transition: all 0.15s ease;
+    }
+    .buttons button:hover{
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    a{
+        color: white;
+        text-decoration: none;
+        background-color: rgba(0, 0, 0, 0);
+        box-sizing: border-box;
+        padding: 2px;
+        border-radius: 4px;
+        transition: all 0.15s ease;
+        font-size: 12px;
+        margin-top: 15px;
+    }
+    a:hover{
+        color: rgba(255, 255, 255, 0.748);
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    /* 移动端竖屏适配：屏幕宽度小于768px时切换为上下布局 */
+    @media (max-width: 768px){
+        body{
+            height: auto;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        #mainView{
+            height: auto;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+            padding: 12px;
+        }
+        #history{
+            height: auto;
+        }
+        #leftView{
+            width: 100%;
+            height: auto;
+            margin-left: 0;
+        }
+        #rightView{
+            flex: none;
+            width: 100%;
+            height: auto;
+            margin-left: 0;
+            margin-top: 10px;
+        }
+        #rightView > h1{
+            font-size: 26px;
+        }
+        #rightView > h3{
+            font-size: 16px;
+        }
+        #rightView h2{
+            font-size: 20px;
+        }
+        /* 给绝对定位的项目图标留出空间，避免文字被遮挡 */
+        #project .contentBox{
+            padding-right: 75px;
+        }
+        #project .contentBox h1{
+            font-size: 20px;
+        }
+        #project .contentBox p{
+            font-size: 13px;
+        }
+    }
+</style>
+<body>
+    <div id="mainView">
+        <div id="leftView">
+            <div id="welcome" class="contentBox" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <img src="https://avatars.githubusercontent.com/u/226067410?s=400&u=d7c6c1269e5a43b80d95406572726820ebadf0cf&v=4" alt="头像" style="width: 100px; height: 100px; border-radius: 50%;">
+                <h3 style="color: white; font-weight: 100;">这里是Ywang</h3>
+                <div class="buttons">
+                    <button onclick="window.location.href='https://github.com/Winnako155'"><svg t="1790250254932" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5143" width="256" height="256"><path d="M1023.560892 524.587752c0 114.331752-32.549236 217.148443-97.647709 308.450075-65.047295 91.301632-149.132822 154.455339-252.205404 189.512299-11.975662 2.303012-20.778286 0.716493-26.305515-4.759558a27.584966 27.584966 0 0 1-8.342021-20.471218V853.150798c0-44.166653-11.566238-76.511177-34.647536-96.982394a446.272549 446.272549 0 0 0 68.32269-12.282731c20.16415-5.476051 41.044792-14.329852 62.590748-26.612583a187.311643 187.311643 0 0 0 53.992837-45.446104c14.432209-18.014672 26.203159-41.914819 35.312851-71.751618 9.109692-29.8368 13.664538-64.074912 13.664538-102.765514 0-55.118754-17.554069-102.049021-52.61103-140.739623 16.376974-41.454216 14.636921-87.872703-5.373695-139.357815-12.436265-4.094244-30.399759-1.535341-53.941659 7.523172a355.17563 355.17563 0 0 0-61.311297 30.041513l-25.333132 16.376974a462.137743 462.137743 0 0 0-127.945112-17.707604 462.137743 462.137743 0 0 0-127.945111 17.758782 589.571074 589.571074 0 0 0-28.301459-18.424096c-11.77095-7.31846-30.34858-16.069906-55.681713-26.305515-25.281954-10.235609-44.422543-13.306292-57.31941-9.212048-19.498835 51.433935-21.085354 97.852421-4.606024 139.306637-35.108139 38.690602-52.713386 85.620869-52.713386 140.739623 0 38.690602 4.606024 72.826357 13.715716 102.458445 9.109692 29.58091 20.778286 53.481057 34.954605 71.700441a180.658498 180.658498 0 0 0 53.634591 45.753172c21.545957 12.282731 42.477777 21.18771 62.641926 26.612583 20.215328 5.527229 42.989557 9.621472 68.32269 12.333909-17.758781 16.376974-28.659705 39.867697-32.651593 70.369811a129.941055 129.941055 0 0 1-29.990334 10.235609 184.087426 184.087426 0 0 1-37.974109 3.428929c-14.688099 0-29.171485-4.913092-43.654872-14.688099-14.432209-9.826185-26.766117-24.053681-37.001726-42.682489a109.162769 109.162769 0 0 0-32.293346-35.517563c-13.101579-9.109692-24.104859-14.585743-33.009839-16.376974l-13.306292-2.047122c-9.314404 0-15.762838 1.023561-19.345301 3.070683-3.582463 2.047122-4.606024 4.606024-3.326572 7.83024a37.769397 37.769397 0 0 0 5.987831 9.570295 49.182101 49.182101 0 0 0 8.700267 8.188487l4.606024 3.377751c9.826185 4.606024 19.447657 13.255114 29.017952 25.998447 9.570294 12.743333 16.581686 24.360749 20.982998 34.80107l6.653146 15.71166c5.783119 17.298179 15.558126 31.320963 29.376197 42.017174 13.766894 10.747389 28.659705 17.554069 44.627255 20.471218 15.96755 2.968327 31.423319 4.606024 46.316131 4.810736 14.841633 0.204712 27.22672-0.562958 37.001726-2.405368l15.302235-2.712436c0 17.298179 0.102356 37.564685 0.358247 60.799517l0.307068 36.848192c0 8.188487-2.86597 15.046345-8.700268 20.471218-5.731941 5.527229-14.636921 7.113748-26.612583 4.810736-103.072582-35.056961-187.158109-98.261846-252.205404-189.512299C32.549236 741.736195 0 638.919504 0 524.587752c0-95.191163 22.876586-182.910331 68.629758-263.31104a516.028224 516.028224 0 0 1 186.288082-190.894106A491.309228 491.309228 0 0 1 511.780446 0.012795a491.309228 491.309228 0 0 1 256.913784 70.369811 516.028224 516.028224 0 0 1 186.236905 190.894106C1000.684306 341.626242 1023.560892 429.447767 1023.560892 524.587752z" fill="#ffffff" p-id="5144"></path></svg></button>
+                    <button onclick="window.location.href='https://space.bilibili.com/696501979'"><svg t="1790250571403" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8154" width="200" height="200"><path d="M306.005333 117.632L444.330667 256h135.296l138.368-138.325333a42.666667 42.666667 0 1 1 60.373333 60.373333l-78.037333 77.952L789.333333 256A149.333333 149.333333 0 0 1 938.666667 405.333333v341.333334a149.333333 149.333333 0 0 1-149.333334 149.333333h-554.666666A149.333333 149.333333 0 0 1 85.333333 746.666667v-341.333334A149.333333 149.333333 0 0 1 234.666667 256h88.96L245.632 177.962667a42.666667 42.666667 0 0 1 60.373333-60.373334zM789.333333 341.333333h-554.666666a64 64 0 0 0-63.701334 57.856L170.666667 405.333333v341.333334a64 64 0 0 0 57.856 63.701333L234.666667 810.666667h554.666666a64 64 0 0 0 63.701334-57.813334L853.333333 746.666667v-341.333334A64 64 0 0 0 789.333333 341.333333zM341.333333 469.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v85.333333a42.666667 42.666667 0 1 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 42.666666-42.666667z m341.333334 0a42.666667 42.666667 0 0 1 42.666666 42.666667v85.333333a42.666667 42.666667 0 1 1-85.333333 0v-85.333333a42.666667 42.666667 0 0 1 45.568-45.568z" p-id="8155" fill="#ffffff"></path></svg></button>
+                    <button onclick="window.location.href='mailto:ywang155@outlook.com'"><svg t="1790250751663" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12436" width="200" height="200"><path d="M784 144H240C152 144 80 216 80 304v416c0 88 72 160 160 160h544c88 0 160-72 160-160V304c0-88-72-160-160-160z m-544 64h544c35.2 0 65.6 19.2 81.6 46.4L552 508.8c-24 19.2-57.6 19.2-80 0L158.4 254.4c16-27.2 46.4-46.4 81.6-46.4z m544 608H240c-52.8 0-96-43.2-96-96V326.4L432 560c24 19.2 51.2 28.8 80 28.8 28.8 0 57.6-9.6 80-28.8l288-233.6V720c0 52.8-43.2 96-96 96z" fill="#ffffff" p-id="12437"></path></svg></button>
+                </div>
+            </div>
+            <div id="info" class="contentBox">
+                <div id="address" style="display: flex; gap: 5px; align-items: center;">
+                    <svg t="1790250976149" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="13473" width="200" height="200"><path d="M509.742106 34.86188c-96.818487 0-189.482448 38.47451-257.761157 106.933851-68.278709 68.45934-106.753219 161.303934-106.753219 257.941789 0 145.408361 189.482448 434.960663 295.151878 559.777033 17.159993 20.41136 42.448404 32.152408 69.181867 32.152408h0.361263c26.733463 0 52.021873-11.741048 69.181866-32.152408C684.774034 834.698183 874.256483 544.96525 874.256483 399.73752c0.180632-201.404128-163.110249-364.875639-364.514377-364.87564z m8.128418 872.992062c-1.986947 2.34821-4.877051 3.61263-7.947786 3.612631h-0.361263c-3.070736 0-5.96084-1.445052-7.947787-3.793262-42.990298-50.757453-115.2429-149.201623-178.825189-260.109367-87.967543-154.078673-97.360381-224.705592-97.360381-247.826424 0-157.149409 127.345211-284.49462 284.313988-284.675252 157.149409 0.361263 284.313988 127.706474 284.313989 284.675252 0 69.543129-68.098077 196.527077-97.360381 247.826424-63.221027 110.907744-135.834892 209.171282-178.82519 260.289998z" fill="#ffffff" p-id="13474"></path><path d="M509.922738 217.2997h-0.361263c-88.509437 0-160.400776 71.891339-160.400776 160.400776s71.891339 160.400776 160.400776 160.400776h0.722526c88.509437-0.180632 160.220145-72.07197 160.220144-160.581407-0.180632-88.690069-72.07197-160.400776-160.581407-160.220145z m0 240.601164h-0.541895c-44.254719 0-80.200388-35.945669-80.200388-80.200388s35.945669-80.200388 80.200388-80.200388h0.180632c44.254719 0 80.200388 35.765038 80.381019 80.019757 0.180632 44.254719-35.584406 80.200388-80.019756 80.381019z" fill="#ffffff" p-id="13475"></path></svg>
+                    <p style="font-size: 12px; color: white;">石家庄市，河北省</p>
+                </div>
+                <div style="margin-top: 10px; display: flex; gap: 5px; align-items: center;">
+                    <svg t="1790251135449" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14996" width="256" height="256"><path d="M704.512 982.016H319.488c-16.384 0-29.184-13.312-29.184-29.184V258.048c0-16.384 13.312-29.184 29.184-29.184 16.384 0 29.184 13.312 29.184 29.184v665.088h326.656V258.048c0-16.384 13.312-29.184 29.184-29.184 16.384 0 29.184 13.312 29.184 29.184v694.784c0.512 15.872-12.8 29.184-29.184 29.184z" fill="#ffffff" p-id="14997"></path><path d="M833.024 406.528c-7.168 0-14.336-2.56-20.48-8.192L512 112.128 211.456 398.336c-11.776 11.264-30.208 10.752-41.472-1.024-11.264-11.776-10.752-30.208 1.024-41.472L491.52 50.176c11.264-10.752 29.184-10.752 40.448 0l321.024 305.664c11.776 11.264 12.288 29.696 1.024 41.472a28.3648 28.3648 0 0 1-20.992 9.216z" fill="#ffffff" p-id="14998"></path><path d="M512 556.032c-57.344 0-104.448-46.592-104.448-104.448s46.592-104.448 104.448-104.448 104.448 46.592 104.448 104.448-47.104 104.448-104.448 104.448z m0-149.504c-25.088 0-45.568 20.48-45.568 45.568s20.48 45.568 45.568 45.568 45.568-20.48 45.568-45.568c0-25.6-20.48-45.568-45.568-45.568zM582.656 982.016H441.344c-16.384 0-29.184-13.312-29.184-29.184v-192.512c0-16.384 13.312-29.184 29.184-29.184h141.312c16.384 0 29.184 13.312 29.184 29.184v192.512c0 15.872-12.8 29.184-29.184 29.184z m-112.128-58.88H552.96v-133.632H470.528v133.632zM994.816 600.064h-289.792c-16.384 0-29.184-13.312-29.184-29.184V467.968c0-16.384 13.312-29.184 29.184-29.184h289.792c16.384 0 29.184 13.312 29.184 29.184v102.912c0 16.384-13.312 29.184-29.184 29.184z m-260.608-58.368h230.912v-44.032h-230.912v44.032z" fill="#ffffff" p-id="14999"></path><path d="M918.528 982.016h-214.016c-16.384 0-29.184-13.312-29.184-29.184v-380.416c0-16.384 13.312-29.184 29.184-29.184h214.016c16.384 0 29.184 13.312 29.184 29.184v380.416c0.512 15.872-12.8 29.184-29.184 29.184z m-184.32-58.88h155.136v-322.048h-155.136v322.048zM318.976 600.064H29.184c-16.384 0-29.184-13.312-29.184-29.184V467.968c0-16.384 13.312-29.184 29.184-29.184h289.792c16.384 0 29.184 13.312 29.184 29.184v102.912c0 16.384-12.8 29.184-29.184 29.184z m-260.096-58.368h230.912v-44.032H58.88v44.032z" fill="#ffffff" p-id="15000"></path><path d="M319.488 982.016H105.472c-16.384 0-29.184-13.312-29.184-29.184v-380.416c0-16.384 13.312-29.184 29.184-29.184h214.016c16.384 0 29.184 13.312 29.184 29.184v380.416c0 15.872-13.312 29.184-29.184 29.184z m-184.832-58.88h155.136v-322.048H134.656v322.048zM811.52 752.64c-13.312 0-24.576-10.752-24.576-24.576v-51.2c0-13.312 10.752-24.576 24.576-24.576 13.312 0 24.576 10.752 24.576 24.576v51.2c0 13.312-10.752 24.576-24.576 24.576z" fill="#ffffff" p-id="15001"></path><path d="M212.48 752.64c-13.312 0-24.576-10.752-24.576-24.576v-51.2c0-13.312 10.752-24.576 24.576-24.576s24.576 10.752 24.576 24.576v51.2c0 13.312-11.264 24.576-24.576 24.576zM811.52 881.152c-13.312 0-24.576-10.752-24.576-24.576v-51.2c0-13.312 10.752-24.576 24.576-24.576 13.312 0 24.576 10.752 24.576 24.576v51.2c0 13.312-10.752 24.576-24.576 24.576zM212.48 881.152c-13.312 0-24.576-10.752-24.576-24.576v-51.2c0-13.312 10.752-24.576 24.576-24.576s24.576 10.752 24.576 24.576v51.2c0 13.312-11.264 24.576-24.576 24.576z" fill="#ffffff" p-id="15002"></path></svg>
+                    <p style="font-size: 12px; color: white;">河北正定中学(东校区)</p>
+                </div>
+            </div>
+            <div id="history" class="contentBox" style="color: white; font-size: 12px; overflow: auto; box-sizing: border-box;">
+                <p style="margin-bottom: 10px;">·俊达萌立绘编辑器上线了</br><font style="font-size: 10px; margin-left: 12px;">2026-04-05</font></p>
+                <p style="margin-bottom: 10px;">·迁移到Cloudflare</br><font style="font-size: 10px; margin-left: 12px;">2024-11-25</font></p>
+                <p style="margin-bottom: 10px;">·迁移到Github</br><font style="font-size: 10px; margin-left: 12px;">2024-11-20</font></p>
+                <p style="margin-bottom: 10px;">·屏上时钟上线了</br><font style="font-size: 10px; margin-left: 12px;">2024-02-11</font></p>
+                <p style="margin-bottom: 10px;">·认识了毛豆~</br><font style="font-size: 10px; margin-left: 12px;">2022-08-13</font></p>
+                <p style="margin-bottom: 10px;">·到期暂停运行</br><font style="font-size: 10px; margin-left: 12px;">2022-05-08</font></p>
+                <p ">·本网页建成</br><font style="font-size: 10px; margin-left: 12px;">2020-02-05</font></p>
+            </div>
+            <div id="friends" class="contentBox" >
+                <p style="font-size: 14px; color: white; ">好朋友的家~</p>
+                <a href="https://space.bilibili.com/3493118590585375">GKTlts</a>
+                <a href="https://space.bilibili.com/226039998">YAYEXIN</a>
+                <a href="https://space.bilibili.com/701416254">Shepurs_Flwr</a>
+                <a href="https://space.bilibili.com/3546651132168987">Miofeather</a>
+            </div>
+        </div>
+        
         <div id="rightView">
-            
-            <div id="rightView_mainView"> <!-- 右侧图 标题视图 -->
-                <h1 id="rightView_title">这里是YWANG</h1> <!-- 标题 -->
-                <p id="rightView_quotes"></p> <!-- 引言 -->
-                <div id="rightView_contentView"> <!-- 主内容视图 -->
-                    <div id="rightView_firstLine"> <!-- 第一行 -->
-                        <div id="rightView_timeView" class="items"> <!-- 时间视图 -->
-                            <p id="rightView_date">NaN年NaN月NaN日 星期NaN</p>
-                            <p id="rightView_time">NaN:NaN:NaN</p> <!-- 时间 -->
-                        </div>
-                        <div id="rightView_timeCapsuleView" class="items"> <!-- 时间视图 -->
-                            <p id="rightView_timeCapsuleText">NaN年已经过去了:</p>
-                            <div id="yearProcess"> <!-- 时间进度条 -->
-                                <div id="yearProcessContent">
-                                    <p id="yearProcessText">NaN%</p>
-                                </div> <!-- 进度条内容 -->
-                            </div> 
-                        </div>
-                    </div>
-                    <div id="issueView" class="items" > <!-- 第二行 -->
-                        <h1 style="margin-left: 5px;">随记</h1>
-                        <ul id="issues">
-                        </ul>
-                    </div>
+            <h1 style="font-weight: 200; color: white; text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);">Hi,Ywang there~</h1>
+            <h3 style="font-weight: 300; color: white; text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);">回首依然望见故乡月亮🌕~</h3>
+
+            <div id="project" style="margin-top: 10px;">
+                <h2 style=" color: white; display: flex; align-items: center; margin-bottom: 10px;"><svg t="1790254273794" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4790" width="200" height="200"><path d="M357.416807 548.994566l306.228473 0 0-76.54535-306.228473 0L357.416807 548.994566zM200.461079 510.692215c0-88.038102 68.861344-156.953681 156.955728-156.953681l114.842585 0 0-72.729441-114.842585 0c-126.337383 0-229.6821 103.34574-229.6821 229.683123 0 126.335337 103.344716 229.683123 229.6821 229.683123l114.842585 0 0-72.728418-114.842585 0C269.322423 667.647943 200.461079 598.678128 200.461079 510.692215M663.64528 281.009092l-114.842585 0 0 72.729441 114.842585 0c88.034009 0 156.898423 68.915579 156.898423 156.953681 0 87.98489-68.863391 156.954705-156.898423 156.954705l-114.842585 0 0 72.728418 114.842585 0c126.33636 0 229.683123-103.347786 229.683123-229.683123C893.32738 384.354831 789.98164 281.009092 663.64528 281.009092" p-id="4791" fill="#ffffff"></path></svg>项目</h2>
+                <div onclick="window.location.href='https://github.com/Winnako155/Zundamon-Sprite-Editor'"  class="contentBox" style="position: relative; cursor: pointer;">
+                    <h1 style="font-weight: 200; color: white; font-size: 23px;">俊达萌立绘编辑器</h1>
+                    <p style="font-size: 15px; color: white; font-weight: 300;">能够更直观编辑立绘的小工具</p>
+                    <img style="position: absolute; height: 50px; right: 15px; top: 50%; transform: translateY(-50%);" src="https://pic1.imgdb.cn/i/034UOKU83SA5pqIkZtfA7V.png" alt="项目图标">
+                </div>
+                <div onclick="window.location.href='https://github.com/Winnako155/DaysMatter-WPF'" class="contentBox" style="position: relative; cursor: pointer;">
+                    <h1 style="font-weight: 200; color: white; font-size: 23px;">Varcon倒数日</h1>
+                    <p style="font-size: 15px; color: white; font-weight: 300;">显示距离重要日子的时间</p>
+                    <img style="position: absolute; height: 50px; right: 15px; top: 50%; transform: translateY(-50%);" src="https://pic1.imgdb.cn/i/034UOSlTCxhZ0n8VTqC0hY.png" alt="项目图标">
+                </div>
+                <div onclick="window.location.href='https://github.com/Winnako155/varcon'" class="contentBox" style="position: relative; cursor: pointer;">
+                    <h1 style="font-weight: 200; color: white; font-size: 23px;">Varcon Start Menu</h1>
+                    <p style="font-size: 15px; color: white; font-weight: 300;">合作项目 点击查看详情</p>
+                    <img style="position: absolute; height: 50px; right: 15px; top: 50%; transform: translateY(-50%);" src="https://pic1.imgdb.cn/i/034UOUPiLB6dIGbsznzTDz.png" alt="项目图标">
+                </div>
+
+                <div onclick="window.location.href='https://github.com/Winnako/Full-screen-clock/'"  class="contentBox" style="position: relative; cursor: pointer;">
+                    <h1 style="font-weight: 200; color: white; font-size: 23px;">屏上时钟</h1>
+                    <p style="font-size: 15px; color: white; font-weight: 300;">能够在屏幕上显示时间</p>
+                    <img style="position: absolute; height: 50px; right: 15px; top: 50%; transform: translateY(-50%);" src="https://pic1.imgdb.cn/i/034UOhD6Sq13GV8SIeiRHm.png" alt="项目图标">
                 </div>
             </div>
         </div>
     </div>
+    <!-- 播放器容器 -->
     <div id="aplayer"></div>
-</body> 
-<script src="./APlayer.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- Markdown解析库 -->
-<script src="./dialog.js"></script> <!-- 对话框 -->
-<script src="./githubIssue.js"></script>
-<script src="./quotes.js"></script> <!-- 引言 -->
-<script src="./styles.js"></script> <!-- 样式 -->
-<script src="./script.js"></script> <!-- 脚本 -->
-<script src="./live2d/autoload.js"></script> <!-- 自动加载 live2d -->
+
+    <!-- Live2D Widget 初始化 -->
+    <script>
+    (function() {
+        // live2d-widget 资源路径（CDN）
+        const live2d_path = 'https://fastly.jsdelivr.net/npm/live2d-widgets@1.0.1/dist/';
+        
+        // 封装异步加载资源的方法
+        function loadExternalResource(url, type) {
+            return new Promise((resolve, reject) => {
+                let tag;
+                if (type === 'css') {
+                    tag = document.createElement('link');
+                    tag.rel = 'stylesheet';
+                    tag.href = url;
+                } else if (type === 'js') {
+                    tag = document.createElement('script');
+                    tag.type = 'module';
+                    tag.src = url;
+                }
+                if (tag) {
+                    tag.onload = () => resolve(url);
+                    tag.onerror = () => reject(url);
+                    document.head.appendChild(tag);
+                }
+            });
+        }
+
+        // 避免图片资源跨域问题
+        const OriginalImage = window.Image;
+        window.Image = function(...args) {
+            const img = new OriginalImage(...args);
+            img.crossOrigin = "anonymous";
+            return img;
+        };
+        window.Image.prototype = OriginalImage.prototype;
+
+        // 加载 waifu.css 和 waifu-tips.js
+        Promise.all([
+            loadExternalResource(live2d_path + 'waifu.css', 'css'),
+            loadExternalResource(live2d_path + 'waifu-tips.js', 'js')
+        ]).then(() => {
+            // 初始化看板娘
+            initWidget({
+                waifuPath: live2d_path + 'waifu-tips.json',
+                cdnPath: './',           // 模型路径，指向当前目录
+                cubism2Path: live2d_path + 'live2d.min.js',
+                cubism5Path: 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js',
+                tools: ['hitokoto', 'switch-model', 'photo', 'info', 'quit'],
+                logLevel: 'warn',
+                drag: false,
+            });
+            document.getElementById("waifu").style.left = "auto";
+            document.getElementById("waifu").style.right = "0px";
+            document.getElementById("live2d").style.width = "220px";
+        }).catch(err => {
+            console.error('Live2D widget 加载失败:', err);
+        });
+    })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+    <script>
+        // 初始化APlayer
+        const ap = new APlayer({
+          element: document.getElementById('aplayer'), // 绑定容器元素
+          fixed: true,
+          audio: [
+    {
+        name: '夜のうた', // 歌曲名称
+        artist: 'きくお / 初音ミク', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=29185037.mp3', // 音频文件URL
+        cover: 'http://p1.music.126.net/I3XunOL3IGvZeEuT6ZtXkQ==/7923080790859517.jpg?param=130y130', // 封面图片URL
+    },
+    {
+        name: 'Daybreak', // 歌曲名称
+        artist: '俊达萌', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=2714577391.mp3', // 音频文件URL
+        cover: 'http://p1.music.126.net/I_TlT6cAh0gSGfOrwBjIMg==/109951171294878501.jpg?param=130y130', // 封面图片URL
+    },
+    
+    {
+        name: 'IMAWANOKIWA', // 歌曲名称
+        artist: 'いよわ / 初音ミク', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=1825059848.mp3', // 音频文件URL
+        cover: 'http://p2.music.126.net/FOX5IKHtQIweVR_kicVd0Q==/109951165780360293.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: 'Machine Love', // 歌曲名称
+        artist: 'Jamie Paige / 重音テト', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=2131189040.mp3', // 音频文件URL
+        cover: 'http://p2.music.126.net/-J7Mi5t-OXhTZGWbq3n2Bw==/109951169376679396.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: 'ソワカの声', // 歌曲名称
+        artist: 'きくお / 初音ミク', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=1953837080.mp3', // 音频文件URL
+        cover: 'http://p2.music.126.net/fgP5dgcwgTThHA1qw9_7ww==/109951167519878271.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: 'そのまんまそのまんま、そのままずっとそのまま', // 歌曲名称
+        artist: 'きくお', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=2077766479.mp3', // 音频文件URL
+        cover: 'http://p2.music.126.net/0JETLfHYMQjKqIXP0O2M5Q==/109951168879279669.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: 'ちっちゃな私', // 歌曲名称
+        artist: '重音テト / マサラダ', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=2084302199.mp3', // 音频文件URL
+        cover: 'http://p1.music.126.net/ALUmiB2BBISOBxaSNeSqcQ==/109951169507943723.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: 'まにまに', // 歌曲名称
+        artist: 'r-906 / 初音ミク', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=1939575649.mp3', // 音频文件URL
+        cover: 'http://p1.music.126.net/rZkTrJg5BJZ4_5Fi_yAcrw==/109951167314446463.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: 'ワンダー', // 歌曲名称
+        artist: 'r-906 / 初音ミク', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=3406178212.mp3', // 音频文件URL
+        cover: 'http://p1.music.126.net/cOQdwWu53og2PCGny3ub0Q==/109951173553130997.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: '梅に鶯 (feat. 琴葉 茜・葵)', // 歌曲名称
+        artist: 'r-906 / 琴葉茜・葵', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=2125282926.mp3', // 音频文件URL
+        cover: 'http://p1.music.126.net/OCucuWB6pfxE8t9hY3wrFg==/109951169324537251.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: 'パノプティコン', // 歌曲名称
+        artist: 'r-906 / 初音ミク', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=1840235144.mp3', // 音频文件URL
+        cover: 'http://p1.music.126.net/i4mnpFIVuxe3xagqPdTVhQ==/109951165924021606.jpg?param=130y130', // 封面图片URL
+      },
+    {
+        name: 'おどロボ', // 歌曲名称
+        artist: '海茶 / 琴葉茜・葵 / ずんだもん', // 歌手名称
+        url: 'https://music.163.com/song/media/outer/url?id=2066455750.mp3', // 音频文件URL
+        cover: 'http://p1.music.126.net/SVf-GnFFs-w4cvgo6ex6eQ==/109951168758539346.jpg?param=130y130', // 封面图片URL
+      },]
+    });
+    </script>
+    <script>
+        const now = new Date();
+        const hours = ('0' + now.getHours()).slice(-2); // 获取当前小时
+        if(hours >= "7" && hours < "16"){
+            //如果是白天
+            document.body.style.backgroundImage = "url('https://pic1.imgdb.cn/i/034ULUlfQQOsLV5YLjphnT.jpg')";
+        }else if(hours >= "16" && hours < "19"){
+            //如果是下午
+            document.body.style.backgroundImage = "url('https://pic1.imgdb.cn/i/034ULUjqLdt9gexKKb8knW.jpg')";
+        }
+        else if(hours >= "19"){
+            //如果是晚上
+            document.body.style.backgroundImage = "url('https://pic1.imgdb.cn/i/034ULUjoCgpbfLwy29FDaX.jpg')";
+        }else{
+            //如果是其他时间
+            document.body.style.backgroundImage = "url('https://pic1.imgdb.cn/i/034ULUlfQQOsLV5YLjphnT.jpg')";
+        }   
+    </script>
+</body>
 </html>
