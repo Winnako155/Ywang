@@ -65,6 +65,8 @@
         margin-left: 10px;
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
+        overscroll-behavior: contain;
     }
 
     #rightView{
@@ -87,7 +89,7 @@
         transform: translateY(-2px);
     }
     /* ---------- 好朋友的家（竖列） ---------- */
-    #friends .friendsTitle{
+    .friendsTitle{
         margin: 0 0 8px;
         font-size: 14px;
         color: white;
@@ -354,6 +356,133 @@
     .friendSheetBtn:hover{
         color: white;
         background-color: rgba(255, 255, 255, 0.24);
+    }
+    /* ---------- 群宣 ---------- */
+    .groupRow{
+        display: flex;
+        gap: 8px;
+    }
+    .groupBtn{
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: white;
+        font-family: inherit;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        transition: transform 0.18s ease;
+    }
+    .groupBtn:hover{
+        transform: translateY(-3px);
+    }
+    .groupThumb{
+        position: relative;
+        display: block;
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+    .groupImg{
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        transition: opacity 0.18s ease;
+    }
+    .groupImgDefault{
+        z-index: 2;
+        opacity: 1;
+    }
+    .groupImgHover{
+        z-index: 1;
+        opacity: 0;
+    }
+    .groupBtn:hover .groupImgDefault{
+        opacity: 0;
+    }
+    .groupBtn:hover .groupImgHover{
+        opacity: 1;
+    }
+    .groupName{
+        font-size: 11px;
+        line-height: 1.3;
+        color: white;
+        text-align: center;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-all;
+    }
+    /* ---------- 群二维码弹窗 ---------- */
+    #groupModal{
+        position: fixed;
+        inset: 0;
+        z-index: 1003;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.55);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    #groupModal.open{
+        display: flex;
+        opacity: 1;
+    }
+    .groupSheet{
+        position: relative;
+        box-sizing: border-box;
+        max-width: 100%;
+        max-height: 88vh;
+        padding: 10px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background-color: rgba(18, 26, 32, 0.94);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        transform: scale(0.96);
+        transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    #groupModal.open .groupSheet{
+        opacity: 1;
+        transform: none;
+    }
+    #groupModal .friendSheetClose{
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    #groupModal .friendSheetClose:hover{
+        background-color: rgba(0, 0, 0, 0.72);
+    }
+    #groupQr{
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: min(320px, 78vw);
+        max-height: 72vh;
+        border-radius: 8px;
+    }
+    .groupQrTip{
+        margin-top: 8px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
     }
     .buttons{
         display: flex;
@@ -995,6 +1124,25 @@
                         <span class="friendSign">接稿/合作请移步 3910778750 · 视频类型：手书、PV</span>
                     </span>
                 </a>
+            </div>
+            <div id="groups" class="contentBox">
+                <p class="friendsTitle">群宣</p>
+                <div class="groupRow">
+                    <button class="groupBtn" type="button" data-qr="images/groups/qr.jpg" aria-label="东北毛豆传播全世界 群二维码">
+                        <span class="groupThumb">
+                            <img class="groupImg groupImgHover" src="images/groups/1-h.png" alt="" onerror="this.style.display='none'">
+                            <img class="groupImg groupImgDefault" src="images/groups/1.png" alt="" onerror="this.style.display='none'">
+                        </span>
+                        <span class="groupName">东北毛豆传播全世界</span>
+                    </button>
+                    <button class="groupBtn" type="button" data-qr="images/groups/qr2.jpg" aria-label="东北毛豆二群 群二维码">
+                        <span class="groupThumb">
+                            <img class="groupImg groupImgHover" src="images/groups/2-h.png" alt="" onerror="this.style.display='none'">
+                            <img class="groupImg groupImgDefault" src="images/groups/2.png" alt="" onerror="this.style.display='none'">
+                        </span>
+                        <span class="groupName">东北毛豆二群</span>
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -1922,6 +2070,54 @@
                 if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
             });
             canHover.addEventListener('change', hideBubble);
+        })();
+    </script>
+    <div id="groupModal">
+        <div class="groupSheet">
+            <button id="groupModalClose" class="friendSheetClose" type="button" aria-label="关闭">✕</button>
+            <img id="groupQr" src="" alt="群二维码">
+            <p class="groupQrTip">扫一扫二维码，加入群聊</p>
+        </div>
+    </div>
+    <script>
+        // 群宣：点击群卡片弹出二维码
+        (function(){
+            const buttons = document.querySelectorAll('.groupBtn');
+            const modal = document.getElementById('groupModal');
+            if(!buttons.length || !modal) return;
+
+            const qr = document.getElementById('groupQr');
+            const closeBtn = document.getElementById('groupModalClose');
+            let closeTimer = null;
+
+            function openModal(src){
+                qr.src = src;
+                clearTimeout(closeTimer);
+                modal.style.display = 'flex';
+                void modal.offsetWidth;
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeModal(){
+                modal.classList.remove('open');
+                document.body.style.overflow = '';
+                clearTimeout(closeTimer);
+                closeTimer = setTimeout(function(){
+                    modal.style.display = 'none';
+                    qr.src = '';
+                }, 200);
+            }
+
+            buttons.forEach(function(btn){
+                btn.addEventListener('click', function(){
+                    openModal(btn.getAttribute('data-qr'));
+                });
+            });
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
+            document.addEventListener('keydown', function(e){
+                if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+            });
         })();
     </script>
 </body>
