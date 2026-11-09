@@ -70,7 +70,9 @@
     #rightView{
         height: 100%;
         flex: 1;
+        max-width: 1000px;
         margin-left: 20px;
+        overflow-y: auto;
     }
     .contentBox{
         box-sizing: border-box;
@@ -127,6 +129,240 @@
         background-color: rgba(0, 0, 0, 0.2);
     }
 
+    /* ---------- 文章横向列表 ---------- */
+    .articleCarousel{
+        --articlesPerView: 3;
+        --articleGap: 16px;
+    }
+    .articleViewport{
+        overflow: hidden;
+        padding: 4px 0 6px; /* 给卡片悬停位移留出空间 */
+        cursor: grab;
+        touch-action: pan-y; /* 横向拖拽交给 JS，纵向仍可正常滚动页面 */
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    .articleViewport:active{
+        cursor: grabbing;
+    }
+    .articleTrack{
+        display: flex;
+        column-gap: var(--articleGap);
+        transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+        will-change: transform;
+    }
+    .articleTrack.dragging{
+        transition: none;
+    }
+    .articleCard{
+        flex: 0 0 calc((100% - 2 * var(--articleGap)) / 3);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+    .articleCard:hover{
+        background-color: rgba(0, 0, 0, 0.3);
+        transform: translateY(-2px);
+    }
+    .articleCard img{
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        -webkit-user-drag: none;
+    }
+    .articleCardBody{
+        padding: 10px 12px 12px;
+    }
+    .articleCardBody h3{
+        color: white;
+        font-weight: 300;
+        font-size: 15px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .articleCardBody p{
+        margin-top: 6px;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.65);
+    }
+    .articleNav{
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.2);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.15s ease, opacity 0.15s ease;
+    }
+    .articleNav:hover:not(:disabled){
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    .articleNav:disabled{
+        opacity: 0.3;
+        cursor: default;
+    }
+    .articleDots{
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    .articleDot{
+        width: 6px;
+        height: 6px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.45);
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+    .articleDot.active{
+        background-color: white;
+        transform: scale(1.3);
+    }
+
+    /* ---------- 文章详情页 ---------- */
+    #articleDetail{
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        display: none;
+        box-sizing: border-box;
+        padding: 72px 20px 48px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+    #articleDetail.open{
+        display: block;
+    }
+    #detailBackdrop{
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.45);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    #articleDetail.open #detailBackdrop{
+        opacity: 1;
+    }
+    #articleDetailInner{
+        position: relative;
+        max-width: 760px;
+        margin: 0 auto;
+        color: white;
+    }
+    #detailCover{
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        border-radius: 8px;
+        transform-origin: top left;
+        will-change: transform;
+        transition: transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    #detailCover.no-transition{
+        transition: none;
+    }
+    #detailTitle{
+        margin-top: 18px;
+        font-size: 28px;
+        font-weight: 200;
+        line-height: 1.4;
+        color: white;
+    }
+    #detailDate{
+        margin-top: 8px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+    }
+    #detailContent{
+        margin-top: 24px;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.9;
+        color: white;
+    }
+    #detailContent p{
+        margin-bottom: 14px;
+    }
+    #detailContent a{
+        margin-top: 0;
+        font-size: 15px;
+        text-decoration: underline;
+    }
+    #detailContent img{
+        display: block;
+        max-width: 100%;
+        margin: 16px 0;
+        border-radius: 8px;
+    }
+    /* 详情文字：进入时错峰淡入上浮，退出时快速淡出 */
+    #detailTitle, #detailDate, #detailContent{
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity 0.22s ease, transform 0.3s ease;
+    }
+    #articleDetail.open #detailTitle,
+    #articleDetail.open #detailDate,
+    #articleDetail.open #detailContent{
+        opacity: 1;
+        transform: none;
+        transition: opacity 0.3s ease 0.14s, transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) 0.14s;
+    }
+    #detailBack{
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        z-index: 1000;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 14px 8px 10px;
+        border: none;
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.25);
+        color: white;
+        font-size: 13px;
+        font-family: inherit;
+        cursor: pointer;
+        opacity: 0;
+        transition: background-color 0.15s ease, opacity 0.2s ease;
+    }
+    #articleDetail.open #detailBack{
+        opacity: 1;
+    }
+    #detailBack:hover{
+        background-color: rgba(0, 0, 0, 0.45);
+    }
+
+    /* 中等宽度：每屏 2 张 */
+    @media (max-width: 1100px){
+        .articleCarousel{
+            --articlesPerView: 2;
+        }
+        .articleCard{
+            flex: 0 0 calc((100% - var(--articleGap)) / 2);
+        }
+    }
+
     /* 移动端竖屏适配：屏幕宽度小于768px时切换为上下布局 */
     @media (max-width: 768px){
         body{
@@ -176,6 +412,26 @@
         #project .contentBox p{
             font-size: 13px;
         }
+        /* 移动端文章列表：每屏 1 张，详情页收紧间距 */
+        .articleCarousel{
+            --articlesPerView: 1;
+        }
+        .articleCard{
+            flex: 0 0 100%;
+        }
+        #articleDetail{
+            padding: 64px 14px 32px;
+        }
+        #detailTitle{
+            font-size: 22px;
+        }
+        #detailContent{
+            font-size: 14px;
+        }
+        #detailBack{
+            left: 12px;
+            top: 12px;
+        }
     }
 </style>
 <body>
@@ -222,6 +478,24 @@
             <h1 style="font-weight: 200; color: white; text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);">Hi,Ywang there~</h1>
             <h3 style="font-weight: 300; color: white; text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);">回首依然望见故乡月亮🌕~</h3>
 
+            <div id="articles" style="margin-top: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <h2 style="color: white; display: flex; align-items: center; margin: 0;">
+                        <svg class="icon" viewBox="0 0 24 24" width="200" height="200"><path d="M4 5h16v2H4zM4 11h16v2H4zM4 17h10v2H4z" fill="#ffffff"></path></svg>文章
+                    </h2>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="articlePrev" class="articleNav" type="button" aria-label="上一页"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M15 5l-7 7 7 7"/></svg></button>
+                        <button id="articleNext" class="articleNav" type="button" aria-label="下一页"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M9 5l7 7-7 7"/></svg></button>
+                    </div>
+                </div>
+                <div id="articleCarousel" class="articleCarousel">
+                    <div id="articleViewport" class="articleViewport">
+                        <div id="articleTrack" class="articleTrack"></div>
+                    </div>
+                    <div id="articleDots" class="articleDots"></div>
+                </div>
+            </div>
+
             <div id="project" style="margin-top: 10px;">
                 <h2 style=" color: white; display: flex; align-items: center; margin-bottom: 10px;"><svg t="1790254273794" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4790" width="200" height="200"><path d="M357.416807 548.994566l306.228473 0 0-76.54535-306.228473 0L357.416807 548.994566zM200.461079 510.692215c0-88.038102 68.861344-156.953681 156.955728-156.953681l114.842585 0 0-72.729441-114.842585 0c-126.337383 0-229.6821 103.34574-229.6821 229.683123 0 126.335337 103.344716 229.683123 229.6821 229.683123l114.842585 0 0-72.728418-114.842585 0C269.322423 667.647943 200.461079 598.678128 200.461079 510.692215M663.64528 281.009092l-114.842585 0 0 72.729441 114.842585 0c88.034009 0 156.898423 68.915579 156.898423 156.953681 0 87.98489-68.863391 156.954705-156.898423 156.954705l-114.842585 0 0 72.728418 114.842585 0c126.33636 0 229.683123-103.347786 229.683123-229.683123C893.32738 384.354831 789.98164 281.009092 663.64528 281.009092" p-id="4791" fill="#ffffff"></path></svg>项目</h2>
                 <div onclick="window.location.href='https://github.com/Winnako155/Zundamon-Sprite-Editor'"  class="contentBox" style="position: relative; cursor: pointer;">
@@ -248,6 +522,18 @@
             </div>
         </div>
     </div>
+    <!-- 文章详情页 -->
+    <div id="articleDetail">
+        <button id="detailBack" type="button"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M15 5l-7 7 7 7"/></svg>返回</button>
+        <div id="detailBackdrop"></div>
+        <div id="articleDetailInner">
+            <img id="detailCover" alt="">
+            <h1 id="detailTitle"></h1>
+            <p id="detailDate"></p>
+            <div id="detailContent"></div>
+        </div>
+    </div>
+
     <!-- 播放器容器 -->
     <div id="aplayer"></div>
 
@@ -410,6 +696,313 @@
             //如果是其他时间
             document.body.style.backgroundImage = "url('https://pic1.imgdb.cn/i/034ULUlfQQOsLV5YLjphnT.jpg')";
         }   
+    </script>
+    <script>
+        // 文章横向列表：数据来自 articles/ 目录，每篇文章一个 js 文件
+        (function(){
+            const section = document.getElementById('articles');
+            const carousel = document.getElementById('articleCarousel');
+            const viewport = document.getElementById('articleViewport');
+            const track = document.getElementById('articleTrack');
+            const dotsBox = document.getElementById('articleDots');
+            const prevBtn = document.getElementById('articlePrev');
+            const nextBtn = document.getElementById('articleNext');
+
+            const overlay = document.getElementById('articleDetail');
+            const detailCover = document.getElementById('detailCover');
+            const detailTitle = document.getElementById('detailTitle');
+            const detailDate = document.getElementById('detailDate');
+            const detailContent = document.getElementById('detailContent');
+            const backBtn = document.getElementById('detailBack');
+
+            let articles = [];
+            let page = 0;
+            let perView = 3;
+            let totalPages = 1;
+            let offset = 0;          // 当前横向位移（px）
+            let dragging = false;
+            let dragMoved = false;
+            let dragStartX = 0;
+            let dragStartY = 0;
+            let dragStartOffset = 0;
+            let dragStartTarget = null;
+            let detailOpen = false;
+            let closeTimer = null;
+            let coverFlipFrom = null;   // 打开时封面图的起始位置（卡片图的位置）
+
+            function getGap(){
+                const gap = parseFloat(getComputedStyle(track).columnGap);
+                return isNaN(gap) ? 16 : gap;
+            }
+
+            function measure(){
+                const per = parseFloat(getComputedStyle(carousel).getPropertyValue('--articlesPerView'));
+                perView = per > 0 ? per : 3;
+                totalPages = Math.max(1, Math.ceil(articles.length / perView));
+            }
+
+            // 一次翻页（一屏）的位移，等于每张卡片步进 * 每屏卡片数
+            function pageStep(){
+                const card = track.firstElementChild;
+                if(!card) return viewport.clientWidth;
+                return (card.getBoundingClientRect().width + getGap()) * perView;
+            }
+
+            function maxOffset(){
+                return Math.max(0, track.scrollWidth - viewport.clientWidth);
+            }
+
+            function setOffset(px, animated){
+                const target = Math.round(Math.max(0, Math.min(px, maxOffset())));
+                offset = target;
+                track.classList.toggle('dragging', !animated);
+                track.style.transform = 'translateX(-' + target + 'px)';
+            }
+
+            function syncDots(){
+                Array.prototype.forEach.call(dotsBox.children, function(dot, i){
+                    dot.classList.toggle('active', i === page);
+                });
+                prevBtn.disabled = page <= 0;
+                nextBtn.disabled = page >= totalPages - 1;
+            }
+
+            function renderDots(){
+                dotsBox.innerHTML = '';
+                for(let i = 0; i < totalPages; i++){
+                    const dot = document.createElement('button');
+                    dot.type = 'button';
+                    dot.className = 'articleDot';
+                    dot.setAttribute('aria-label', '第 ' + (i + 1) + ' 页');
+                    dot.addEventListener('click', function(){ goToPage(i, true); });
+                    dotsBox.appendChild(dot);
+                }
+                dotsBox.hidden = totalPages <= 1;
+                syncDots();
+            }
+
+            function goToPage(p, animated){
+                page = Math.max(0, Math.min(p, totalPages - 1));
+                setOffset(page * pageStep(), animated);
+                syncDots();
+            }
+
+            // 拖拽（鼠标 + 触摸），触摸纵向滚动仍交给浏览器
+            // 注意：不要在 pointerdown 时就捕获指针，否则 click 的 target 会被改成容器，卡片点不开
+            viewport.addEventListener('pointerdown', function(e){
+                if(e.pointerType === 'mouse' && e.button !== 0) return;
+                dragging = true;
+                dragMoved = false;
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                dragStartOffset = offset;
+                dragStartTarget = e.target;
+            });
+
+            viewport.addEventListener('pointermove', function(e){
+                if(!dragging) return;
+                const dx = e.clientX - dragStartX;
+                const dy = e.clientY - dragStartY;
+                if(!dragMoved && (Math.abs(dx) > 4 || Math.abs(dy) > 6)){
+                    dragMoved = true;
+                    track.classList.add('dragging');
+                    if(viewport.setPointerCapture) viewport.setPointerCapture(e.pointerId);
+                }
+                if(dragMoved) setOffset(dragStartOffset - dx, false);
+            });
+
+            function endDrag(e){
+                if(!dragging) return;
+                dragging = false;
+                const moved = dragMoved;
+                dragMoved = false;
+                if(!moved){
+                    // 没拖动就算一次点击，直接按按下时所在的卡片打开详情
+                    const card = dragStartTarget && dragStartTarget.closest ? dragStartTarget.closest('.articleCard') : null;
+                    if(card) openDetail(articles[Number(card.dataset.index)], card);
+                    return;
+                }
+                track.classList.remove('dragging');
+                const dx = e.clientX - dragStartX;
+                const threshold = Math.min(60, viewport.clientWidth * 0.12);
+                let target = page;
+                if(Math.abs(dx) > threshold){
+                    target += dx < 0 ? 1 : -1;
+                }
+                page = Math.max(0, Math.min(target, totalPages - 1));
+                setOffset(page * pageStep(), true);
+                syncDots();
+            }
+
+            function cancelDrag(){
+                if(!dragging) return;
+                dragging = false;
+                dragMoved = false;
+                track.classList.remove('dragging');
+                setOffset(page * pageStep(), true);
+                syncDots();
+            }
+            viewport.addEventListener('pointerup', endDrag);
+            viewport.addEventListener('pointercancel', cancelDrag);
+            viewport.addEventListener('dragstart', function(e){ e.preventDefault(); });
+
+            prevBtn.addEventListener('click', function(){ goToPage(page - 1, true); });
+            nextBtn.addEventListener('click', function(){ goToPage(page + 1, true); });
+
+            // 进入：封面图从卡片位置放大到全屏位置（FLIP），背景与文字随后淡入
+            function openDetail(a, card){
+                if(!a) return;
+                if(closeTimer){
+                    clearTimeout(closeTimer);
+                    closeTimer = null;
+                }
+
+                if(a.imgSource){
+                    detailCover.src = a.imgSource;
+                    detailCover.style.display = 'block';
+                }else{
+                    detailCover.removeAttribute('src');
+                    detailCover.style.display = 'none';
+                }
+                detailTitle.textContent = a.title || '';
+                detailDate.textContent = a.date || '';
+                detailContent.innerHTML = a.content || '';
+
+                overlay.style.display = 'block';
+                overlay.scrollTop = 0;
+                document.body.style.overflow = 'hidden';
+                detailOpen = true;
+
+                const cardImg = card ? card.querySelector('img') : null;
+                const fromRect = cardImg ? cardImg.getBoundingClientRect() : null;
+                coverFlipFrom = fromRect;
+
+                if(a.imgSource && fromRect){
+                    // 先复位（上一次关闭的动画可能还没结束），量出封面的最终位置
+                    detailCover.classList.add('no-transition');
+                    detailCover.style.transform = '';
+                    void detailCover.offsetWidth;
+                    const toRect = detailCover.getBoundingClientRect();
+                    if(toRect.width > 0){
+                        const dx = fromRect.left - toRect.left;
+                        const dy = fromRect.top - toRect.top;
+                        const sx = fromRect.width / toRect.width;
+                        const sy = fromRect.height / toRect.height;
+                        // 先无过渡地放到卡片图的位置，再下一帧过渡回全屏位置
+                        detailCover.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+                        void detailCover.offsetWidth;
+                        detailCover.classList.remove('no-transition');
+                        detailCover.style.transform = '';
+                    }
+                }
+
+                overlay.classList.add('open');
+            }
+
+            // 退出：封面图缩回卡片位置，文字与背景同时淡出，播完再隐藏
+            function closeDetail(){
+                if(!detailOpen || closeTimer) return;
+                detailOpen = false;
+                overlay.classList.remove('open');
+
+                if(coverFlipFrom && detailCover.style.display !== 'none' && overlay.scrollTop <= 2){
+                    const toRect = detailCover.getBoundingClientRect();
+                    if(toRect.width > 0){
+                        const dx = coverFlipFrom.left - toRect.left;
+                        const dy = coverFlipFrom.top - toRect.top;
+                        const sx = coverFlipFrom.width / toRect.width;
+                        const sy = coverFlipFrom.height / toRect.height;
+                        detailCover.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+                    }
+                }
+
+                closeTimer = setTimeout(function(){
+                    overlay.style.display = 'none';
+                    detailCover.style.transform = '';
+                    coverFlipFrom = null;
+                    closeTimer = null;
+                    document.body.style.overflow = '';
+                }, 460);
+            }
+            backBtn.addEventListener('click', closeDetail);
+            document.addEventListener('keydown', function(e){
+                if(e.key === 'Escape' && overlay.classList.contains('open')) closeDetail();
+            });
+
+            function escapeHTML(str){
+                return String(str).replace(/[&<>"']/g, function(c){
+                    return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
+                });
+            }
+
+            function render(){
+                if(!articles.length){
+                    section.hidden = true;
+                    return;
+                }
+                articles.sort(function(a, b){
+                    return String(b.date || '').localeCompare(String(a.date || ''));
+                });
+                track.innerHTML = articles.map(function(a, i){
+                    return '<article class="articleCard" data-index="' + i + '">' +
+                        (a.imgSource ? '<img src="' + escapeHTML(a.imgSource) + '" alt="' + escapeHTML(a.title || '') + '" loading="lazy" draggable="false">' : '') +
+                        '<div class="articleCardBody">' +
+                            '<h3>' + escapeHTML(a.title || '') + '</h3>' +
+                            '<p>' + escapeHTML(a.date || '') + '</p>' +
+                        '</div>' +
+                    '</article>';
+                }).join('');
+                measure();
+                page = 0;
+                renderDots();
+                setOffset(0, false);
+            }
+
+            let resizeTimer = null;
+            window.addEventListener('resize', function(){
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function(){
+                    if(!articles.length) return;
+                    measure();
+                    if(page > totalPages - 1) page = totalPages - 1;
+                    renderDots();
+                    setOffset(page * pageStep(), false);
+                }, 120);
+            });
+
+            function loadScript(src){
+                return new Promise(function(resolve, reject){
+                    const s = document.createElement('script');
+                    s.src = src;
+                    s.onload = resolve;
+                    s.onerror = function(){ reject(new Error('无法加载 ' + src)); };
+                    document.head.appendChild(s);
+                });
+            }
+
+            (async function(){
+                try{
+                    await loadScript('articles/manifest.js');
+                }catch(err){
+                    console.error('文章清单加载失败：', err);
+                    section.hidden = true;
+                    return;
+                }
+                const files = window.ARTICLE_MANIFEST || [];
+                await Promise.all(files.map(function(f){
+                    return loadScript('articles/' + f).catch(function(err){
+                        console.warn('文章加载失败：', err);
+                    });
+                }));
+                articles = window.ARTICLES || [];
+                try{
+                    render();
+                }catch(err){
+                    console.error('文章渲染失败：', err);
+                    section.hidden = true;
+                }
+            })();
+        })();
     </script>
 </body>
 </html>
