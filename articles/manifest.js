@@ -5,5 +5,6 @@ window.ARTICLE_MANIFEST = [
     '2021-02-12-article-7aba.js',
     '2021-05-05-article-6f2f.js',
     '2021-11-18-article-5463.js',
-    '2022-02-02-article-54fa.js'
+    '2022-02-02-article-54fa.js',
+    '2022-06-25-arduino-6290.js'
 ];
