@@ -1,4 +1,6 @@
 window.ARTICLE_MANIFEST = [
+    '2026-08-30-wpf-blend-5e8ada.js',
+    '2026-08-13-wpf-blend-wpf-8d20df.js',
     '2020-02-05-article-afa5.js',
     '2020-05-22-article-16e2.js',
     '2020-09-09-article-343c.js',
