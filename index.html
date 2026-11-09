@@ -235,6 +235,131 @@
         background-color: white;
         transform: scale(1.3);
     }
+    .articleNav.allBtn{
+        width: auto;
+        height: 28px;
+        padding: 0 12px;
+        gap: 5px;
+        border-radius: 14px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 300;
+        white-space: nowrap;
+    }
+
+    /* ---------- 全部文章（全屏竖列，从下往上滑出） ---------- */
+    #articleListPage{
+        position: fixed;
+        inset: 0;
+        z-index: 998;
+        display: none;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        background-color: rgba(0, 0, 0, 0.5);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        transform: translateY(100%);
+        transition: transform 0.36s cubic-bezier(0.22, 0.61, 0.36, 1);
+        will-change: transform;
+    }
+    #articleListPage.open{
+        transform: translateY(0);
+    }
+    #articleListHeader{
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: calc(16px + env(safe-area-inset-top)) 20px 12px;
+        background: linear-gradient(rgba(12, 22, 28, 0.92), rgba(12, 22, 28, 0.7) 72%, transparent);
+    }
+    #articleListHeader h2{
+        margin: 0;
+        color: white;
+        font-size: 18px;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+    }
+    #articleListClose{
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.12);
+        color: white;
+        font-family: inherit;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.15s ease;
+    }
+    #articleListClose:hover{
+        background-color: rgba(255, 255, 255, 0.24);
+    }
+    #articleListInner{
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 8px 20px calc(40px + env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .articleListItem{
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        text-align: left;
+        background-color: rgba(0, 0, 0, 0.2);
+        color: white;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+    .articleListItem:hover{
+        background-color: rgba(0, 0, 0, 0.32);
+        transform: translateY(-2px);
+    }
+    .articleListItem img{
+        display: block;
+        flex: none;
+        width: 132px;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+    .articleListItemInfo{
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .articleListItemInfo h3{
+        margin: 0;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .articleListItemInfo p{
+        margin: 0;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.65);
+    }
 
     /* ---------- 文章详情页 ---------- */
     #articleDetail{
@@ -452,6 +577,12 @@
         .articleCard{
             flex: 0 0 100%;
         }
+        .articleListItem img{
+            width: 104px;
+        }
+        .articleListItemInfo h3{
+            font-size: 14px;
+        }
         #articleDetail{
             padding: 64px 14px 32px;
         }
@@ -516,7 +647,8 @@
                     <h2 style="color: white; display: flex; align-items: center; margin: 0;">
                         <svg class="icon" viewBox="0 0 24 24" width="200" height="200"><path d="M4 5h16v2H4zM4 11h16v2H4zM4 17h10v2H4z" fill="#ffffff"></path></svg>文章
                     </h2>
-                    <div style="display: flex; gap: 8px;">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button id="articleAll" class="articleNav allBtn" type="button" aria-label="全部文章"><svg viewBox="0 0 24 24" style="width: 12px; height: 12px; fill: #fff;"><path d="M4 5h16v2H4zM4 11h16v2H4zM4 17h10v2H4z"></path></svg>全部文章</button>
                         <button id="articlePrev" class="articleNav" type="button" aria-label="上一页"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M15 5l-7 7 7 7"/></svg></button>
                         <button id="articleNext" class="articleNav" type="button" aria-label="下一页"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M9 5l7 7-7 7"/></svg></button>
                     </div>
@@ -555,6 +687,15 @@
             </div>
         </div>
     </div>
+    <!-- 全部文章（全屏竖列） -->
+    <div id="articleListPage">
+        <div id="articleListHeader">
+            <h2>全部文章</h2>
+            <button id="articleListClose" type="button" aria-label="关闭">✕</button>
+        </div>
+        <div id="articleListInner"></div>
+    </div>
+
     <!-- 文章详情页 -->
     <div id="articleDetail">
         <button id="detailBack" type="button"><svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M15 5l-7 7 7 7"/></svg>返回</button>
@@ -748,6 +889,11 @@
             const detailContent = document.getElementById('detailContent');
             const backBtn = document.getElementById('detailBack');
 
+            const allBtn = document.getElementById('articleAll');
+            const listPage = document.getElementById('articleListPage');
+            const listInner = document.getElementById('articleListInner');
+            const listClose = document.getElementById('articleListClose');
+
             let articles = [];
             let page = 0;
             let perView = 3;
@@ -762,6 +908,10 @@
             let detailOpen = false;
             let closeTimer = null;
             let coverFlipFrom = null;   // 打开时封面图的起始位置（卡片图的位置）
+            let listOpen = false;
+            let listBuilt = false;
+            let listTimer = null;
+            let scrollTimer = null;     // 从全部文章跳页后，等翻页动画结束再打开详情
 
             function getGap(){
                 const gap = parseFloat(getComputedStyle(track).columnGap);
@@ -959,7 +1109,87 @@
             }
             backBtn.addEventListener('click', closeDetail);
             document.addEventListener('keydown', function(e){
-                if(e.key === 'Escape' && overlay.classList.contains('open')) closeDetail();
+                if(e.key !== 'Escape') return;
+                if(overlay.classList.contains('open')) closeDetail();
+                else if(listOpen) closeList();
+            });
+
+            // ---------- 全部文章（全屏竖列） ----------
+            function buildList(){
+                listInner.innerHTML = articles.map(function(a, i){
+                    return '<button class="articleListItem" type="button" data-index="' + i + '">' +
+                        (a.imgSource ? '<img src="' + escapeHTML(a.imgSource) + '" alt="" loading="lazy" draggable="false">' : '') +
+                        '<div class="articleListItemInfo">' +
+                            '<h3>' + escapeHTML(a.title || '') + '</h3>' +
+                            '<p>' + escapeHTML(a.date || '') + '</p>' +
+                        '</div>' +
+                    '</button>';
+                }).join('');
+                listBuilt = true;
+            }
+
+            function openList(){
+                if(!articles.length) return;
+                if(listTimer){
+                    clearTimeout(listTimer);
+                    listTimer = null;
+                }
+                if(!listBuilt) buildList();
+                listPage.style.display = 'block';
+                listPage.scrollTop = 0;
+                document.body.style.overflow = 'hidden';
+                listOpen = true;
+                void listPage.offsetWidth;
+                listPage.classList.add('open');
+            }
+
+            // 收起全屏列表，动画播完再执行回调
+            function closeList(callback){
+                if(!listOpen){
+                    if(callback) callback();
+                    return;
+                }
+                listOpen = false;
+                listPage.classList.remove('open');
+                listTimer = setTimeout(function(){
+                    listPage.style.display = 'none';
+                    listTimer = null;
+                    if(!detailOpen && !listOpen) document.body.style.overflow = '';
+                    if(callback) callback();
+                }, 380);
+            }
+
+            allBtn.addEventListener('click', openList);
+            listClose.addEventListener('click', function(){ closeList(); });
+
+            listInner.addEventListener('click', function(e){
+                const item = e.target.closest ? e.target.closest('.articleListItem') : null;
+                if(!item) return;
+                const index = Number(item.dataset.index);
+                const a = articles[index];
+                if(!a) return;
+
+                const targetPage = Math.min(totalPages - 1, Math.floor(index / perView));
+                const needScroll = targetPage !== page;
+                const card = track.children[index];
+
+                if(scrollTimer){
+                    clearTimeout(scrollTimer);
+                    scrollTimer = null;
+                }
+
+                // 先收起全屏列表，再拨动横向列表，翻页动画结束后才做打开过渡
+                closeList(function(){
+                    if(!needScroll){
+                        openDetail(a, card);
+                        return;
+                    }
+                    goToPage(targetPage, true);
+                    scrollTimer = setTimeout(function(){
+                        scrollTimer = null;
+                        openDetail(a, card);
+                    }, 470);
+                });
             });
 
             function escapeHTML(str){
@@ -987,6 +1217,7 @@
                 }).join('');
                 measure();
                 page = 0;
+                listBuilt = false;
                 renderDots();
                 setOffset(0, false);
             }
