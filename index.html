@@ -427,64 +427,67 @@
         overflow: hidden;
         word-break: break-all;
     }
-    /* ---------- 群二维码弹窗 ---------- */
-    #groupModal{
+    /* ---------- 群号气泡 ---------- */
+    .groupBubble{
         position: fixed;
-        inset: 0;
-        z-index: 1003;
-        display: none;
-        align-items: center;
-        justify-content: center;
+        left: 0;
+        top: 0;
+        z-index: 1001;
         box-sizing: border-box;
-        padding: 20px;
-        background-color: rgba(0, 0, 0, 0.55);
-        -webkit-backdrop-filter: blur(6px);
-        backdrop-filter: blur(6px);
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-    #groupModal.open{
-        display: flex;
-        opacity: 1;
-    }
-    .groupSheet{
-        position: relative;
-        box-sizing: border-box;
-        max-width: 100%;
-        max-height: 88vh;
-        padding: 10px;
-        border-radius: 14px;
+        padding: 9px 14px;
+        border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.16);
-        background-color: rgba(18, 26, 32, 0.94);
-        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+        background-color: rgba(18, 26, 32, 0.93);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        color: white;
+        white-space: nowrap;
         opacity: 0;
-        transform: scale(0.96);
-        transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+        transform: translateY(6px) scale(0.96);
+        transform-origin: center bottom;
+        pointer-events: none;
+        transition: opacity 0.18s ease, transform 0.18s ease;
     }
-    #groupModal.open .groupSheet{
+    .groupBubble.open{
         opacity: 1;
         transform: none;
+        pointer-events: auto;
     }
-    #groupModal .friendSheetClose{
-        z-index: 2;
-        background-color: rgba(0, 0, 0, 0.5);
+    .groupBubble::before{
+        content: '';
+        position: absolute;
+        left: var(--tailLeft, 18px);
+        bottom: -7px;
+        width: 12px;
+        height: 12px;
+        background-color: rgba(24, 33, 40, 1);
+        border-right: 1px solid rgba(255, 255, 255, 0.16);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+        transform: rotate(45deg);
     }
-    #groupModal .friendSheetClose:hover{
-        background-color: rgba(0, 0, 0, 0.72);
-    }
-    #groupQr{
+    .groupBubbleLabel{
         display: block;
-        width: auto;
-        height: auto;
-        max-width: min(320px, 78vw);
-        max-height: 72vh;
-        border-radius: 8px;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.5);
     }
-    .groupQrTip{
-        margin-top: 8px;
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
-        text-align: center;
+    .groupBubbleNum{
+        display: block;
+        margin-top: 2px;
+        font-size: 13px;
+        line-height: 1.3;
+        color: white;
+    }
+    .groupBubbleHint{
+        display: block;
+        margin-top: 4px;
+        font-size: 10px;
+        line-height: 1.3;
+        color: rgba(255, 255, 255, 0.45);
+    }
+    .groupBubbleHint.copied{
+        color: rgba(130, 230, 170, 0.95);
     }
     .buttons{
         display: flex;
@@ -1157,14 +1160,14 @@
             <div id="groups" class="contentBox">
                 <p class="friendsTitle">群宣</p>
                 <div class="groupRow">
-                    <button class="groupBtn" type="button" data-qr="images/groups/qr.jpg" aria-label="东北毛豆传播全世界 群二维码">
+                    <button class="groupBtn" type="button" data-group="630161805" aria-label="东北毛豆传播全世界，群号 630161805">
                         <span class="groupThumb">
                             <img class="groupImg groupImgHover" src="images/groups/1-h.png" alt="" onerror="this.style.display='none'">
                             <img class="groupImg groupImgDefault" src="images/groups/1.png" alt="" onerror="this.style.display='none'">
                         </span>
                         <span class="groupName">东北毛豆传播全世界</span>
                     </button>
-                    <button class="groupBtn" type="button" data-qr="images/groups/qr2.jpg" aria-label="东北毛豆二群 群二维码">
+                    <button class="groupBtn" type="button" data-group="1127971748" aria-label="东北毛豆二群，群号 1127971748">
                         <span class="groupThumb">
                             <img class="groupImg groupImgHover" src="images/groups/2-h.png" alt="" onerror="this.style.display='none'">
                             <img class="groupImg groupImgDefault" src="images/groups/2.png" alt="" onerror="this.style.display='none'">
@@ -2023,6 +2026,11 @@
         })();
     </script>
     <div id="friendBubble" class="friendBubble"></div>
+    <div id="groupBubble" class="groupBubble" role="tooltip">
+        <span class="groupBubbleLabel">QQ 群号</span>
+        <span class="groupBubbleNum"></span>
+        <span class="groupBubbleHint">点击立绘即可复制</span>
+    </div>
     <div id="friendModal">
         <div class="friendSheet">
             <button id="friendModalClose" class="friendSheetClose" type="button" aria-label="关闭">✕</button>
@@ -2235,51 +2243,110 @@
             canHover.addEventListener('change', hideBubble);
         })();
     </script>
-    <div id="groupModal">
-        <div class="groupSheet">
-            <button id="groupModalClose" class="friendSheetClose" type="button" aria-label="关闭">✕</button>
-            <img id="groupQr" src="" alt="群二维码">
-            <p class="groupQrTip">扫一扫二维码，加入群聊</p>
-        </div>
-    </div>
     <script>
-        // 群宣：点击群卡片弹出二维码
+        // 群宣：立绘上方弹出群号气泡，点击立绘复制群号
         (function(){
             const buttons = document.querySelectorAll('.groupBtn');
-            const modal = document.getElementById('groupModal');
-            if(!buttons.length || !modal) return;
+            const bubble = document.getElementById('groupBubble');
+            if(!buttons.length || !bubble) return;
 
-            const qr = document.getElementById('groupQr');
-            const closeBtn = document.getElementById('groupModalClose');
-            let closeTimer = null;
+            const numEl = bubble.querySelector('.groupBubbleNum');
+            const hintEl = bubble.querySelector('.groupBubbleHint');
+            const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+            const HINT_TEXT = '点击立绘即可复制';
+            let showTimer = null;
+            let hideTimer = null;
+            let copiedTimer = null;
 
-            function openModal(src){
-                qr.src = src;
-                clearTimeout(closeTimer);
-                modal.style.display = 'flex';
-                void modal.offsetWidth;
-                modal.classList.add('open');
-                document.body.style.overflow = 'hidden';
+            function position(btn){
+                const rect = btn.getBoundingClientRect();
+                bubble.style.left = '0px';
+                bubble.style.top = '0px';
+                const bw = bubble.offsetWidth;
+                const bh = bubble.offsetHeight;
+                let left = rect.left + rect.width / 2 - bw / 2;
+                left = Math.max(8, Math.min(left, window.innerWidth - bw - 8));
+                let top = rect.top - bh - 12;
+                top = Math.max(8, Math.min(top, window.innerHeight - bh - 8));
+                bubble.style.left = left + 'px';
+                bubble.style.top = top + 'px';
+                let tail = rect.left + rect.width / 2 - left - 6;
+                tail = Math.max(12, Math.min(tail, bw - 24));
+                bubble.style.setProperty('--tailLeft', tail + 'px');
             }
-            function closeModal(){
-                modal.classList.remove('open');
-                document.body.style.overflow = '';
-                clearTimeout(closeTimer);
-                closeTimer = setTimeout(function(){
-                    modal.style.display = 'none';
-                    qr.src = '';
-                }, 200);
+            function show(btn){
+                numEl.textContent = btn.getAttribute('data-group') || '';
+                hintEl.textContent = HINT_TEXT;
+                hintEl.classList.remove('copied');
+                clearTimeout(copiedTimer);
+                bubble.classList.add('open');
+                position(btn);
+            }
+            function hide(){
+                bubble.classList.remove('open');
+            }
+            function copyText(text){
+                return new Promise(function(resolve, reject){
+                    function legacyCopy(){
+                        const ta = document.createElement('textarea');
+                        ta.value = text;
+                        ta.setAttribute('readonly', '');
+                        ta.style.position = 'fixed';
+                        ta.style.top = '-1000px';
+                        ta.style.opacity = '0';
+                        document.body.appendChild(ta);
+                        ta.select();
+                        try {
+                            if(document.execCommand('copy')) resolve();
+                            else reject(new Error('copy failed'));
+                        } catch(e){
+                            reject(e);
+                        }
+                        document.body.removeChild(ta);
+                    }
+                    if(navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext){
+                        navigator.clipboard.writeText(text).then(resolve, legacyCopy);
+                    } else {
+                        legacyCopy();
+                    }
+                });
             }
 
             buttons.forEach(function(btn){
+                btn.addEventListener('mouseenter', function(){
+                    if(!canHover.matches) return;
+                    clearTimeout(hideTimer);
+                    clearTimeout(showTimer);
+                    showTimer = setTimeout(function(){ show(btn); }, 90);
+                });
+                btn.addEventListener('mouseleave', function(){
+                    if(!canHover.matches) return;
+                    clearTimeout(showTimer);
+                    hideTimer = setTimeout(hide, 160);
+                });
                 btn.addEventListener('click', function(){
-                    openModal(btn.getAttribute('data-qr'));
+                    const num = btn.getAttribute('data-group') || '';
+                    show(btn);
+                    copyText(num).then(function(){
+                        hintEl.textContent = '已复制';
+                        hintEl.classList.add('copied');
+                        clearTimeout(copiedTimer);
+                        copiedTimer = setTimeout(function(){
+                            hintEl.textContent = HINT_TEXT;
+                            hintEl.classList.remove('copied');
+                        }, 1800);
+                    }).catch(function(){
+                        hintEl.textContent = '复制失败，请手动输入';
+                        hintEl.classList.remove('copied');
+                    });
                 });
             });
-            closeBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
-            document.addEventListener('keydown', function(e){
-                if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+
+            window.addEventListener('scroll', hide, true);
+            window.addEventListener('resize', hide);
+            document.addEventListener('click', function(e){
+                if(e.target.closest('.groupBtn') || e.target.closest('.groupBubble')) return;
+                hide();
             });
         })();
     </script>
