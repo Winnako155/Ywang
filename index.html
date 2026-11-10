@@ -1960,9 +1960,7 @@
                     section.hidden = true;
                     return;
                 }
-                articles.sort(function(a, b){
-                    return String(b.date || '').localeCompare(String(a.date || ''));
-                });
+                // 顺序由 articles/manifest.js 决定，可在编辑器里调整
                 track.innerHTML = articles.map(function(a, i){
                     return '<article class="articleCard" data-index="' + i + '">' +
                         (a.imgSource ? '<img src="' + escapeHTML(a.imgSource) + '" alt="' + escapeHTML(a.title || '') + '" loading="lazy" draggable="false">' : '') +
@@ -1995,6 +1993,8 @@
                 return new Promise(function(resolve, reject){
                     const s = document.createElement('script');
                     s.src = src;
+                    // 保证多个文章脚本按 manifest 顺序执行，以便按顺序展示
+                    s.async = false;
                     s.onload = resolve;
                     s.onerror = function(){ reject(new Error('无法加载 ' + src)); };
                     document.head.appendChild(s);
