@@ -18,5 +18,6 @@ window.ARTICLE_MANIFEST = [
     '2025-01-31-zion-1-779e1d.js',
     '2025-02-02-vs-4f650c.js',
     '2025-06-14-article-9969.js',
-    '2025-09-19-article-b36d.js'
+    '2025-09-19-article-b36d.js',
+    '2024-11-22-article-7d63.js'
 ];
