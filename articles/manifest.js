@@ -22,5 +22,6 @@ window.ARTICLE_MANIFEST = [
     '2024-11-22-article-7d63.js',
     '2023-10-28-article-bdd8.js',
     '2026-03-19-article-a1ea.js',
-    '2026-03-13-article-7998.js'
+    '2026-03-13-article-7998.js',
+    '2026-04-13-article-1100.js'
 ];
