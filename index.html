@@ -1186,6 +1186,9 @@
         display: flex;
         justify-content: space-between;
     }
+    .ywTipActions.is-single{
+        justify-content: center;
+    }
     .ywTipBtn{
         width: 19.8%;
         aspect-ratio: 1;
@@ -1194,19 +1197,37 @@
         border-radius: 26%;
         background-color: rgba(0, 0, 0, 0.8);
         cursor: pointer;
-        transition: background-color 0.18s ease, transform 0.18s ease;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: opacity 0.22s ease, transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.18s ease;
+        transition-delay: 0s;
+    }
+    #ywTip.is-open .ywTipBtn{
+        opacity: 1;
+        transform: scale(1);
+    }
+    #ywTip.is-open .ywTipActions .ywTipBtn:nth-child(1){
+        transition-delay: 0.16s;
+    }
+    #ywTip.is-open .ywTipActions .ywTipBtn:nth-child(2){
+        transition-delay: 0.26s;
+    }
+    #ywTip.is-closing .ywTipBtn{
+        opacity: 0;
+        transform: scale(0.6);
+        transition-delay: 0s;
     }
     .ywTipBtn:hover{
         background-color: rgba(255, 255, 255, 0.14);
     }
-    .ywTipBtn:active{
-        transform: scale(0.94);
+    #ywTip.is-open .ywTipBtn:active{
+        transform: scale(0.93);
     }
     .ywTipBtn svg{
         display: block;
-        width: 62%;
-        height: 62%;
-        margin: 19% auto;
+        width: 76%;
+        height: 76%;
+        margin: 12% auto;
         stroke: #fff;
         fill: none;
     }
@@ -2564,7 +2585,7 @@
     <script>
     // ---------- 通用提示框：showTip({...}) → Promise<boolean> ----------
     (function(){
-        var tipEl = null, maskEl, bodyEl, okBtn, cancelBtn, escHandler = null, current = {};
+        var tipEl = null, maskEl, bodyEl, actionsEl, okBtn, cancelBtn, escHandler = null, current = {};
 
         function build(){
             if(tipEl) return;
@@ -2587,6 +2608,7 @@
 
             maskEl = tipEl.querySelector('#ywTipMask');
             bodyEl = tipEl.querySelector('.ywTipBody');
+            actionsEl = tipEl.querySelector('.ywTipActions');
             okBtn = tipEl.querySelector('.ywTipOk');
             cancelBtn = tipEl.querySelector('.ywTipCancel');
 
@@ -2635,6 +2657,7 @@
             }
 
             cancelBtn.style.display = opts.showCancel === false ? 'none' : '';
+            actionsEl.classList.toggle('is-single', opts.showCancel === false);
             okBtn.setAttribute('aria-label', opts.confirmLabel || '确定');
             cancelBtn.setAttribute('aria-label', opts.cancelLabel || '取消');
 
