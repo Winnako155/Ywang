@@ -1095,6 +1095,127 @@
             border-radius: 0;
         }
     }
+    /* ---------- 通用提示框（光遇风） ---------- */
+    #ywTip{
+        position: fixed;
+        inset: 0;
+        z-index: 3000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+    #ywTipMask{
+        position: absolute;
+        inset: 0;
+        background-color: #000;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+    #ywTip.is-open #ywTipMask{
+        opacity: 0.8;
+    }
+    .ywTipPanel{
+        position: relative;
+        width: 80vw;
+        max-width: 1100px;
+        aspect-ratio: 1602 / 860;
+        max-height: 86vh;
+        box-sizing: border-box;
+        border-radius: clamp(12px, 1.1vw, 22px);
+        background-color: rgba(0, 0, 0, 0.8);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 24px 80px rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        transform: scale(0.7);
+        transition: opacity 0.35s ease, transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #ywTip.is-open .ywTipPanel{
+        opacity: 1;
+        transform: scale(1);
+    }
+    #ywTip.is-closing .ywTipPanel{
+        opacity: 0;
+        transform: scale(0.86);
+        transition-duration: 0.2s, 0.24s;
+    }
+    #ywTip.is-closing #ywTipMask{
+        opacity: 0;
+        transition-duration: 0.25s;
+    }
+    .ywTipIcon{
+        position: absolute;
+        top: 14.05%;
+        left: 50%;
+        height: 13.3%;
+        width: auto;
+        transform: translateX(-50%);
+        fill: #fff;
+    }
+    .ywTipBody{
+        position: absolute;
+        top: 33%;
+        bottom: 31%;
+        left: 50%;
+        width: 74%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+    }
+    .ywTipTitle{
+        margin-bottom: 0.5em;
+        font-size: clamp(17px, 2.5vw, 38px);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+    .ywTipText{
+        font-size: clamp(14px, 2.2vw, 34px);
+        font-weight: 600;
+        line-height: 1.6;
+        letter-spacing: 0.02em;
+        white-space: pre-line;
+    }
+    .ywTipActions{
+        position: absolute;
+        top: 67.1%;
+        left: 50%;
+        width: 60%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: space-between;
+    }
+    .ywTipBtn{
+        width: 19.8%;
+        aspect-ratio: 1;
+        padding: 0;
+        border: none;
+        border-radius: 26%;
+        background-color: rgba(0, 0, 0, 0.8);
+        cursor: pointer;
+        transition: background-color 0.18s ease, transform 0.18s ease;
+    }
+    .ywTipBtn:hover{
+        background-color: rgba(255, 255, 255, 0.14);
+    }
+    .ywTipBtn:active{
+        transform: scale(0.94);
+    }
+    .ywTipBtn svg{
+        display: block;
+        width: 62%;
+        height: 62%;
+        margin: 19% auto;
+        stroke: #fff;
+        fill: none;
+    }
+    @media (max-width: 768px){
+        .ywTipPanel{
+            width: 88vw;
+            max-height: none;
+        }
+    }
 </style>
 <body>
     <a id="upBadge" href="https://space.bilibili.com/1285606978"  title="ぬぬぬぬぬぬぬぬぬぬ的B站主页" aria-label="访问ぬぬぬぬぬぬぬぬぬぬ的B站主页">
@@ -2439,6 +2560,104 @@
                 hide();
             });
         })();
+    </script>
+    <script>
+    // ---------- 通用提示框：showTip({...}) → Promise<boolean> ----------
+    (function(){
+        var tipEl = null, maskEl, bodyEl, okBtn, cancelBtn, escHandler = null, current = {};
+
+        function build(){
+            if(tipEl) return;
+            tipEl = document.createElement('div');
+            tipEl.id = 'ywTip';
+            tipEl.innerHTML =
+                '<div id="ywTipMask"></div>' +
+                '<div class="ywTipPanel" role="dialog" aria-modal="true">' +
+                    '<svg class="ywTipIcon" viewBox="786 121 48 114" xmlns="http://www.w3.org/2000/svg">' +
+                        '<circle cx="801" cy="223" r="12" fill="#fff"></circle>' +
+                        '<path fill="#fff" d="M800.5 128C816 128 816 142 816 142L811.16 190.43C810.727 194.759 809.627 199.28 806.2 201.96C804.733 203.107 802.964 204 801 204C799.445 204 797.938 203.323 796.6 202.39C792.583 199.589 791.247 194.462 790.76 189.59L786 142C786 142 786 128 800.5 128Z"></path>' +
+                    '</svg>' +
+                    '<div class="ywTipBody"></div>' +
+                    '<div class="ywTipActions">' +
+                        '<button type="button" class="ywTipBtn ywTipCancel" aria-label="取消"><svg viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><path d="M62 62L128 128M128 62L62 128" stroke-width="13" stroke-linecap="round"></path></svg></button>' +
+                        '<button type="button" class="ywTipBtn ywTipOk" aria-label="确定"><svg viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><path d="M52 98L84 130L142 62" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(tipEl);
+
+            maskEl = tipEl.querySelector('#ywTipMask');
+            bodyEl = tipEl.querySelector('.ywTipBody');
+            okBtn = tipEl.querySelector('.ywTipOk');
+            cancelBtn = tipEl.querySelector('.ywTipCancel');
+
+            okBtn.addEventListener('click', function(){ close(true); });
+            cancelBtn.addEventListener('click', function(){ close(false); });
+            maskEl.addEventListener('click', function(){
+                if(current.maskClosable !== false) close(false);
+            });
+        }
+
+        function close(result){
+            if(!tipEl || !tipEl.classList.contains('is-open')) return;
+            tipEl.classList.add('is-closing');
+            tipEl.classList.remove('is-open');
+            if(escHandler){ document.removeEventListener('keydown', escHandler); escHandler = null; }
+            var done = false;
+            var finish = function(){
+                if(done) return;
+                done = true;
+                tipEl.classList.remove('is-closing');
+                tipEl.style.display = 'none';
+                var fn = tipEl.__resolve;
+                tipEl.__resolve = null;
+                if(fn) fn(result);
+            };
+            setTimeout(finish, 520);
+        }
+
+        function showTip(options){
+            build();
+            var opts = options || {};
+            current = opts;
+
+            bodyEl.innerHTML = '';
+            if(opts.title){
+                var t = document.createElement('div');
+                t.className = 'ywTipTitle';
+                t.textContent = opts.title;
+                bodyEl.appendChild(t);
+            }
+            if(opts.text){
+                var p = document.createElement('div');
+                p.className = 'ywTipText';
+                p.textContent = opts.text;
+                bodyEl.appendChild(p);
+            }
+
+            cancelBtn.style.display = opts.showCancel === false ? 'none' : '';
+            okBtn.setAttribute('aria-label', opts.confirmLabel || '确定');
+            cancelBtn.setAttribute('aria-label', opts.cancelLabel || '取消');
+
+            tipEl.style.display = 'flex';
+            tipEl.classList.remove('is-closing');
+            requestAnimationFrame(function(){
+                requestAnimationFrame(function(){ tipEl.classList.add('is-open'); });
+            });
+
+            escHandler = function(e){
+                if(e.key === 'Escape' && opts.escClosable !== false) close(false);
+            };
+            document.addEventListener('keydown', escHandler);
+
+            return new Promise(function(resolve){
+                if(tipEl.__resolve) tipEl.__resolve(false);
+                tipEl.__resolve = resolve;
+            });
+        }
+
+        showTip.close = function(){ close(false); };
+        window.showTip = showTip;
+    })();
     </script>
 </body>
 </html>
