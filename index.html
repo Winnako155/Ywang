@@ -1153,10 +1153,32 @@
     .ywTipBody{
         position: absolute;
         top: 33%;
-        bottom: 31%;
+        bottom: 36%;
         left: 50%;
         width: 74%;
         transform: translateX(-50%);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding-right: 4px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+    }
+    .ywTipBody::-webkit-scrollbar{
+        display: block;
+        width: 5px;
+    }
+    .ywTipBody::-webkit-scrollbar-track{
+        background: transparent;
+    }
+    .ywTipBody::-webkit-scrollbar-thumb{
+        border-radius: 999px;
+        background-color: rgba(255, 255, 255, 0.35);
+    }
+    .ywTipBody::-webkit-scrollbar-thumb:hover{
+        background-color: rgba(255, 255, 255, 0.55);
+    }
+    .ywTipBodyInner{
+        min-height: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1171,11 +1193,13 @@
         letter-spacing: 0.02em;
     }
     .ywTipText{
-        font-size: clamp(14px, 2.2vw, 34px);
+        font-size: clamp(13px, 2vw, 31px);
         font-weight: 600;
         line-height: 1.6;
         letter-spacing: 0.02em;
         white-space: pre-line;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
     .ywTipActions{
         position: absolute;
@@ -2600,7 +2624,7 @@
                         '<circle cx="801" cy="223" r="12" fill="#fff"></circle>' +
                         '<path fill="#fff" d="M800.5 128C816 128 816 142 816 142L811.16 190.43C810.727 194.759 809.627 199.28 806.2 201.96C804.733 203.107 802.964 204 801 204C799.445 204 797.938 203.323 796.6 202.39C792.583 199.589 791.247 194.462 790.76 189.59L786 142C786 142 786 128 800.5 128Z"></path>' +
                     '</svg>' +
-                    '<div class="ywTipBody"></div>' +
+                    '<div class="ywTipBody"><div class="ywTipBodyInner"></div></div>' +
                     '<div class="ywTipActions">' +
                         '<button type="button" class="ywTipBtn ywTipCancel" aria-label="取消"><svg viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><path d="M62 62L128 128M128 62L62 128" stroke-width="13" stroke-linecap="round"></path></svg></button>' +
                         '<button type="button" class="ywTipBtn ywTipOk" aria-label="确定"><svg viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><path d="M52 98L84 130L142 62" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>' +
@@ -2609,7 +2633,7 @@
             document.body.appendChild(tipEl);
 
             maskEl = tipEl.querySelector('#ywTipMask');
-            bodyEl = tipEl.querySelector('.ywTipBody');
+            bodyEl = tipEl.querySelector('.ywTipBodyInner');
             actionsEl = tipEl.querySelector('.ywTipActions');
             okBtn = tipEl.querySelector('.ywTipOk');
             cancelBtn = tipEl.querySelector('.ywTipCancel');
@@ -2715,8 +2739,7 @@
 
             showTip({
                 title: title,
-                text: '你正在尝试跳转到外部网页：' + url + '，请注意网络安全。',
-                showCancel: false
+                text: '你正在尝试跳转到外部网页：' + url + '，请注意网络安全。'
             }).then(function(ok){
                 if(!ok) return;
                 if(el.getAttribute('target') === '_blank'){
