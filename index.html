@@ -1199,29 +1199,31 @@
         cursor: pointer;
         opacity: 0;
         transform: scale(0.5);
-        transition: opacity 0.22s ease, transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.18s ease;
-        transition-delay: 0s;
+        transition: opacity 0.18s ease, transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.12s ease;
+        transition-delay: 0s, 0s, 0s;
     }
     #ywTip.is-open .ywTipBtn{
         opacity: 1;
         transform: scale(1);
     }
     #ywTip.is-open .ywTipActions .ywTipBtn:nth-child(1){
-        transition-delay: 0.16s;
+        transition-delay: 0.15s, 0.15s, 0s;
     }
     #ywTip.is-open .ywTipActions .ywTipBtn:nth-child(2){
-        transition-delay: 0.26s;
+        transition-delay: 0.24s, 0.24s, 0s;
     }
     #ywTip.is-closing .ywTipBtn{
         opacity: 0;
         transform: scale(0.6);
-        transition-delay: 0s;
+        transition-delay: 0s, 0s, 0s;
     }
     .ywTipBtn:hover{
         background-color: rgba(255, 255, 255, 0.14);
     }
     #ywTip.is-open .ywTipBtn:active{
         transform: scale(0.93);
+        transition-duration: 0.12s, 0.12s, 0.12s;
+        transition-delay: 0s, 0s, 0s;
     }
     .ywTipBtn svg{
         display: block;
